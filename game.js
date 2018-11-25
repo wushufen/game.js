@@ -355,12 +355,11 @@ var pic = new Sprite({
 })
 
 
-var count = 10000
+var count = 100000
 var title = new Sprite({
 	x: 50,
 	text: count + '个小精灵'
 })
-game.appendChild(title)
 
 for (var i = 0; i < 1111; i++) {
 
@@ -390,3 +389,4 @@ for (var i = 0; i < 1111; i++) {
 // game.appendChild(ts)
 // ts.appendChild(mg)
 game.appendChild(fps)
+game.appendChild(title)
