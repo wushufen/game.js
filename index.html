@@ -66,8 +66,8 @@
                     height: 20,
                     src: 'img/mg.jpg',
                     onframe: function () {
-                        this.x = Math.random() * game.width - this.width
-                        this.y = Math.random() * game.height - this.height
+                        this.x = Math.random() * (game.width - this.width)
+                        this.y = Math.random() * (game.height - this.height)
                     },
                     onclick: function(e){
                         // alert(this.i, this.x, this.y)
