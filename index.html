@@ -17,10 +17,68 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="msapplication-tap-highlight" content="no">
     <title>game.js</title>
+    <style type="text/css">
+        #countEl{
+            position: absolute;
+            top: 0;
+            right: 0;
+            z-index: 9;
+        }
+    </style>
 </head>
 
 <body>
+    <select id="countEl">
+        <option value="10">10个小精灵</option>
+        <option value="100">100个小精灵</option>
+        <option value="1000">1000个小精灵</option>
+        <option value="5000">5000个小精灵</option>
+        <option value="10000">10000个小精灵</option>
+        <option value="20000">20000个小精灵</option>
+        <option value="50000">50000个小精灵</option>
+        <option value="10000">10000个小精灵</option>
+        <option value="15000">15000个小精灵</option>
+    </select>
 	<script src="game.js"></script>
+    <script>
+        var game = new Game()
+
+        var fps = new Fps()
+
+        var count = 100
+        countEl.value = count
+        countEl.onchange = function () {
+            count = +this.value
+            create()
+        }
+
+        create()
+
+        function create() {
+            game.children.length = 0
+
+            for (var i = 0; i < count; i++) {
+                var sprite = new Sprite({
+                    i: i,
+                    x: 300,
+                    y: 300,
+                    width: 20,
+                    height: 20,
+                    src: 'img/mg.jpg',
+                    onframe: function () {
+                        this.x = Math.random() * game.width - this.width
+                        this.y = Math.random() * game.height - this.height
+                    },
+                    onclick: function(e){
+                        // alert(this.i, this.x, this.y)
+                    },
+                })
+                game.appendChild(sprite)
+            }
+
+            game.appendChild(fps)
+        }
+    </script>
 </body>
 
 </html>
