@@ -72,7 +72,7 @@ var EventTarget = Class.extend({
 	name: 'EventTarget',
 	events: {},
 	constructor: function(options){
-		// on
+		// :on[type]
 		for(var key in this){
 			var value = this[key]
 			if (key.match(/^on./) && typeof value == 'function') {
@@ -198,13 +198,13 @@ var Sprite = Watcher.extend({
 		})
 	},
 	appendTo: function (parent) {
-		this.remove()
-		this.parent = parent
-		parent.children.push(this)
+		parent.appendChild(this)
 		return this
 	},
 	appendChild: function(child){
-		child.appendTo(this)
+		child.remove()
+		child.parent = this
+		this.children.push(child)
 		return this
 	},
 	append: function (child) {
