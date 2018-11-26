@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <meta name="MobileOptimized" content="320">
+    <meta name="HandheldFriendly" content="true">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-fullscreen" content="true">
+    <meta name="browsermode" content="application">
+    <meta name="x5-page-mode" content="app">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <title>wsf game.js游戏引擎性能帧率测试</title>
+    <style type="text/css">
+        #countEl{
+            position: absolute;
+            top: 0;
+            right: 0;
+            z-index: 9;
+        }
+    </style>
+</head>
+
+<body>
+    <select id="countEl">
+        <option value="10">10个小精灵</option>
+        <option value="100">100个小精灵</option>
+        <option value="1000">1000个小精灵</option>
+        <option value="5000">5000个小精灵</option>
+        <option value="10000">10000个小精灵</option>
+        <option value="20000">20000个小精灵</option>
+        <option value="50000">50000个小精灵</option>
+        <option value="100000">100000个小精灵</option>
+        <option value="150000">150000个小精灵</option>
+    </select>
+	<script src="../game.js"></script>
+    <script type="">
+        var game = new Game()
+
+        var fps = new Fps({
+            name: 'fffffpppppssss',
+            onclick: function (event) {
+                console.log(event)
+            },
+            onkeyup: function (e) {
+                console.log(this, e)
+            }
+        })
+
+        var count = 100
+        countEl.value = count
+        countEl.onchange = function () {
+            count = +this.value
+            create()
+        }
+
+        create()
+
+        function create() {
+            game.children.length = 0
+
+            for (var i = 0; i < 0; i++) {
+                var sprite = new Sprite({
+                    i: i,
+                    x: 100,
+                    y: 100,
+                    width: 20,
+                    height: 20,
+                    src: 'img/mg.jpg',
+                    xonframe: function () {
+                        this.x = Math.random() * (game.width - this.width)
+                        this.y = Math.random() * (game.height - this.height)
+                    },
+                    onclick: function(e){
+                        console.log(e, this.i, this.x, this.y)
+                    },
+                    onkeyup: function (e) {
+                        console.log(this, e)
+                    }
+                })
+                game.appendChild(sprite)
+            }
+
+            game.appendChild(fps)
+        }
+    </script>
+</body>
+
+</html>

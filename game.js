@@ -2,37 +2,64 @@ function Class() {}
 Class.extend = function (options) {
 	var Parent = this
 
+	// class
+	// 用eval创建构造，可以指定名字
 	var Class = eval('(function ' + (options.name||'Class') + '(){_Class.apply(this,arguments)})')
 	function _Class() {
 		if (Class.__isNotSelfNew) return
 
-		Class.Parent.apply(this, arguments) // Parent.bind this
+		// 【父类构造】
+		// 父类构造的this绑定到当前类的实例
+		Class.Parent.apply(this, arguments)
 
+		// 【字段】
+		// 复制options的字段到实例
 		for(var key in options){
 			var value = options[key]
-			if (value instanceof Array) {
-				this[key] = [].concat(value)
-			}
-			if (toString.call(value) == '[object Object]') {
-				this[key] = {}
-				for(var k in value){
-					this[key][k] = value[k]
+			if (typeof value != 'function') {
+				var value = options[key]
+				this[key] = value
+				// 如果是原生【数组】或【对象】作为直接属性
+				// 则给每个实例复制一份，以免所有实例共用
+				if (value && value.constructor == Array) {
+					this[key] = [].concat(value)
+				}
+				if (value && value.constructor == Object) {
+					this[key] = {}
+					for(var k in value){
+						this[key][k] = value[k]
+					}
 				}
 			}
 		}
+
+		// 【初始化】
+		// options.constructor作为初始化方法，不是真正构造函数
 		options.constructor.apply(this, arguments)
 	}
 
+	// 【继承父类】
+	// prototype是父类的一个实例
+	// __isNotSelfNew: 父类的初始化方法此时暂不执行
+	// 当创建实例时，把父类的初始化方法绑定到当前实例
 	Parent.__isNotSelfNew = true
 	Class.prototype = new Parent
 	delete Parent.__isNotSelfNew
 
+	// 【方法】
+	// 复制options的方法到原型
 	for(var key in options){
-		Class.prototype[key] = options[key]
+		var value = options[key]
+		// if (typeof value == 'function') {
+		Class.prototype[key] = value
+		// }
 	}
+	// 修正prototype.constructor
 	Class.prototype.constructor = Class
 	Class.Parent = Parent
 	Class.options = options
+
+	// 当前类同样可以用.extend派生子类
 	Class.extend = Parent.extend
 
 	return Class
@@ -40,20 +67,28 @@ Class.extend = function (options) {
 
 
 
+
 var EventTarget = Class.extend({
 	name: 'EventTarget',
 	events: {},
-	constructor: function(){
+	constructor: function(options){
+		// on
+		for(var key in this){
+			var value = this[key]
+			if (key.match(/^on./) && typeof value == 'function') {
+				this.on(key.substr(2), value)
+			}
+		}
 	},
-	on: function(type, listener) {
+	on: function(type, handler) {
 		this.events[type] = this.events[type] || []
-		this.events[type].push(listener)
+		this.events[type].push(handler)
 	},
-	off: function(type, listener) {
+	off: function(type, handler) {
 		var fns = this.events[type] = this.events[type] || []
-		if (listener) {
+		if (handler) {
 			for (var i = 0; i < fns.length; i++) {
-				if (fns[i] == listener) {
+				if (fns[i] == handler) {
 					fns.splice(i, 1)
 				}
 			}
@@ -62,16 +97,15 @@ var EventTarget = Class.extend({
 		}
 	},
 	trigger: function(type, event) {
-		// on()
+		event = event || {}
+
 		var fns = this.events[type] || []
 		for (var i = 0; i < fns.length; i++) {
 			fns[i].apply(this, [event])
 		}
-		// .on
-		var handler = this['on' + type]
-		if (typeof handler == 'function') {
-			handler.apply(this, [event])
-		}
+	},
+	pauseListen: function (type) {
+		// body...
 	}
 })
 
@@ -126,22 +160,17 @@ var Sprite = Watcher.extend({
 			}
 			img.src = options.src
 		}
-
-		// onframe
-		self.on('frame', function (e) {
-			self.eachChild(function (child) {
-				child.trigger('frame', e)
-			})
-		})
 		
 		this.trigger('create')
-		
+	},
+	onframe: function (e) {
+		this.each(function (child) {
+			child.trigger('frame', e)
+		})
 	},
 	draw: function(context){
 		this.context = context || this.context || this.parent.context
 		if (!this.context) return
-
-		var self = this
 		var context = this.context
 
 		// img
@@ -158,41 +187,56 @@ var Sprite = Watcher.extend({
 			context.strokeStyle = '#fff'
 			context.fillStyle = this.color
 
-			context.lineWidth = 3
+			context.lineWidth = 2
 			context.strokeText(this.text, this.x, this.y)
 			context.fillText(this.text, this.x, this.y)
 		}
 
 		// children
-		this.eachChild(function(child){
+		this.each(function(child){
 			child.draw()
 		})
-	},
-	appendChild: function(child){
-		child.appendTo(this)
-		return this
 	},
 	appendTo: function (parent) {
 		this.remove()
 		this.parent = parent
 		parent.children.push(this)
+		return this
 	},
-	remove: function(){
+	appendChild: function(child){
+		child.appendTo(this)
+		return this
+	},
+	append: function (child) {
+		this.appendChild(child)
+		return this
+	},
+	removeChild: function (child) {
 		var self = this
 
-		if (this.parent) {
-			this.parent.eachChild(function (child, i) {
-				if (self == child) {
-					self.parent.children.splice(i, 1)
-					return
+		this.each(function (item, i) {
+			if (child) {
+				if (child == item) {
+					self.children.splice(i, 1)
+					child.parent = null
+					return true
 				}
-			})
+			} else {
+				item.parent = null
+			}
+		})
+
+		if (!child) {
+			this.children.length = 0
 		}
 	},
-	destroy: function () {
-		
+	remove: function(){
+		if (this.parent) {
+			this.parent.removeChild(this)
+		}
+		return this
 	},
-	eachChild: function (fn) {
+	each: function (fn) {
 		for (var i = 0; i < this.children.length; i++) {
 			var child = this.children[i]
 			var isBreak = fn(child, i)
@@ -201,32 +245,41 @@ var Sprite = Watcher.extend({
 			}
 		}
 	},
-	isPointOnSelf: function(point){
+	destroy: function () {
+		
+	},
+	animate: function () {
+		
+	},
+	isPointOn: function(point){
 		return point.x >= this.x
 			&& point.x <= this.x + this.width
 			&& point.y >= this.y
 			&& point.y <= this.y + this.height
 	},
-	isPointOn: function(point){
-		var bool = this.isPointOnSelf(point)
-		this.eachChild(function (child) {
-			if (child.isPointOnSelf(point)) {
-				return bool = true
+	hitTest: function(target, fn){
+		var bool = false
+		if (true) {}
+	},
+	// 事件捕获模型，从父到子传播
+	captureEvent: function (event) {
+		console.log(this.name, 'captureEvent')
+		this.trigger(event.type, event)
+
+		this.each(function (child) {
+			console.log(child)
+			if (/^(click|mousemove)$/.test(event.type)) {
+				if (child.isPointOn({x: event.offsetX, y: event.offsetY})) {
+					child.captureEvent(event)
+				}
+			} else {
+				child.captureEvent(event)
 			}
 		})
-		return bool
 	},
-	hitTest: function(target){
-
+	bubbleEvent: function (event) {
+		
 	},
-	eventTest: function(eventName, e){
-		if ( this.isPointOn({x: e.offsetX, y: e.offsetY}) ) {
-			this.trigger(eventName, e)
-			this.eachChild(function (child) {
-				child.eventTest(eventName, e)
-			})
-		}
-	}
 })
 
 
@@ -239,6 +292,7 @@ var Game = Sprite.extend({
 	width: 0,
 	height: 0,
 	timer: null,
+	fpsMax: 1,
 	// sprites: [],
 	constructor: function(options){
 		options = options || {}
@@ -258,13 +312,10 @@ var Game = Sprite.extend({
 	addEventListener: function(){
 		var self = this
 
-		// mounse
-		'click,dblclick'.split(',').forEach(function(eventName){
-			self.canvas.addEventListener(eventName, function(e){
-				self.trigger(eventName, e)
-				self.eachChild(function(child){
-					child.eventTest(eventName, e)
-				})
+		// 注册原生事件
+		'click,dblclick,mousemove,keydown,keypress,keyup'.split(',').forEach(function(type){
+			window.addEventListener(type, function(event){
+				self.captureEvent(event)
 			})
 		})
 
@@ -285,13 +336,16 @@ var Game = Sprite.extend({
 		this.draw()
 	},
 	loop: function(){
+		console.log('loop')
 		var self = this
-		this.trigger('frame')
+
+		this.captureEvent({type: 'frame'})
+
 
 		this.update()
 		this.timer = setTimeout(function(){
 			self.loop()
-		}, 1)
+		}, 1000/ this.fpsMax)
 	},
 	start: function(){
 		this.loop()
@@ -310,6 +364,7 @@ var Fps = Sprite.extend({
 	lastTime: 0,
 	fs: 0,
 	onframe: function () {
+		console.log(this.name, 'Fps onframe')
 		var now = new Date
 		if (now - this.lastTime > 1000) {
 			this.lastTime = now
@@ -319,3 +374,4 @@ var Fps = Sprite.extend({
 		this.fs += 1
 	}
 })
+
