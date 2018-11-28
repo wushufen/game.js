@@ -39,11 +39,12 @@
         <option value="100000">100000个小精灵</option>
         <option value="150000">150000个小精灵</option>
     </select>
-	<script src="game.js"></script>
-    <scriptx>
-        var game = new Game()
-
-        var fps = new Fps()
+    <script src="../game.js"></script>
+    <script>
+        var game = new Game({
+            isStart: true,
+            // fpsMax: 1,
+        })
 
         var count = 100
         countEl.value = count
@@ -51,17 +52,16 @@
             count = +this.value
             create()
         }
-
         create()
 
         function create() {
             game.children.length = 0
 
-            for (var i = 0; i < count; i++) {
+            for (var i = 0; i <count; i++) {
                 var sprite = new Sprite({
                     i: i,
-                    x: 300,
-                    y: 300,
+                    x: 100,
+                    y: 100,
                     width: 20,
                     height: 20,
                     src: 'img/mg.jpg',
@@ -70,12 +70,26 @@
                         this.y = Math.random() * (game.height - this.height)
                     },
                     onclick: function(e){
-                        // alert(this.i, this.x, this.y)
+                        console.log(e, this.i, this.x, this.y)
                     },
+                    onkeyup: function (e) {
+                        console.log(this, e)
+                    }
                 })
                 game.appendChild(sprite)
             }
 
+
+            var fps = new Fps({
+                text: 'fps',
+                color: '#0af',
+                onclick: function (event) {
+                    console.log(event)
+                },
+                onkeyup: function (e) {
+                    console.log(this, e)
+                }
+            })
             game.appendChild(fps)
         }
     </script>
