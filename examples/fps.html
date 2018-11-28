@@ -46,7 +46,7 @@
             // fpsMax: 1,
         })
 
-        var count = 100
+        var count = 0
         countEl.value = count
         countEl.onchange = function () {
             count = +this.value
@@ -57,7 +57,7 @@
         function create() {
             game.children.length = 0
 
-            for (var i = 0; i <count; i++) {
+            for (var i = 0; i < count; i++) {
                 var sprite = new Sprite({
                     i: i,
                     x: 100,
@@ -78,20 +78,19 @@
                 })
                 game.appendChild(sprite)
             }
-
-
-            var fps = new Fps({
-                text: 'fps',
-                color: '#0af',
-                onclick: function (event) {
-                    console.log(event)
-                },
-                onkeyup: function (e) {
-                    console.log(this, e)
-                }
-            })
-            game.appendChild(fps)
         }
+
+
+        var fps = new Fps({
+            text: 'fps',
+            color: '#0af',
+            onclick: function (event) {
+                console.log(event)
+            },
+            onframe: function (e) {
+            }
+        })
+        game.appendChild(fps)
     </script>
 </body>
 

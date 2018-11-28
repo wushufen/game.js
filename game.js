@@ -7,20 +7,19 @@ Class.extend = function (options) {
 	// 用eval创建构造，可以指定名字
 	var Class = eval('(function ' + (options.name||'Class') + '(){_Class.apply(this,arguments)})')
 	function _Class() {
-		// 【实例引用属性副本】
+		// 【实例引用类型属性副本】
 		for(var key in this){
 			var value = this[key]
-			if (typeof value != 'function') {
-				// 如果是原生【数组】或【对象】作为直接属性
-				// 则给每个实例复制一份，以免所有实例共用
-				if (value && value.constructor == Array) {
-					this[key] = [].concat(value)
-				}
-				if (value && value.constructor == Object) {
-					this[key] = {}
-					for(var k in value){
-						this[key][k] = value[k]
-					}
+
+			// 如果是原生【数组】或【对象】作为直接属性
+			// 则给每个实例复制一份，以免所有实例共用
+			if (value && value.constructor == Array) {
+				this[key] = [].concat(value)
+			}
+			if (value && value.constructor == Object) {
+				this[key] = {}
+				for(var k in value){
+					this[key][k] = value[k]
 				}
 			}
 		}
@@ -120,21 +119,40 @@ var Watcher = EventTarget.extend({
 
 var Sprite = Watcher.extend({
 	name: 'Sprite',
-	// 
+	// pos
 	x: 0,
 	y: 0,
-	width: 10,
-	height: 10,
 	// img
 	src: '',
 	img: null,
 	// text
 	text: '',
 	// css
-	color: '#333',
+	width: 10,
+	height: 10,
+	display: 'block',
+	position: 'absolute',
+	left: 'auto',
+	right: 'auto',
+	top: 'auto',
+	bottom: 'auto',
+	background: 'none',
 	border: 'sold 0px #ddd',
 	borderRadius: 0,
-	// 
+	padding: 0,
+	color: '#333',
+	fontFamily: 'monospace',
+	fontSize: 14,
+	lineHeight: 1.25,
+	fontStyle: 'normal',
+	fontWeight: 'normal',
+	textShadow: 'none',
+	boxShadow: 'none',
+	shadow: '??',
+	opacity: 1,
+	zIndex: 0,
+	zoom: 1,
+	// canvas context style
 	font: '14px monospace',
 	textAlign: 'left',
 	textBaseline: 'top',
@@ -236,11 +254,39 @@ var Sprite = Watcher.extend({
 			}
 		}
 	},
-	destroy: function () {
-		
-	},
-	animate: function () {
-		
+	transition: function (options, duration) {
+		duration = duration || 1000
+
+		var self = this
+		var startTime = +new Date
+		var lastTime = startTime
+		var endTime = startTime + duration
+		var keys = Object.keys(options)
+		var dones = 0
+
+		var handler
+		this.on('frame', handler = function () {
+			var now = +new Date
+
+			for(var key in options){
+				var value = options[key]
+				if (typeof value == 'number') {
+					if (Math.abs(self[key]) < Math.abs(value)) {
+						self[key] += (now-lastTime)/duration * value
+					} else {
+						dones += 1
+					}
+				} else {
+					dones += 1
+				}
+			}
+			lastTime = now
+
+			if (dones == keys.length) {
+				Object.assign(self, options)
+				self.off('frame', handler)
+			}
+		})
 	},
 	isPointOn: function(point){
 		return point.x >= this.x
@@ -305,10 +351,13 @@ var Game = Sprite.extend({
 		var self = this
 
 		// 注册原生事件
-		'click,dblclick,mousemove,keydown,keypress,keyup'.split(',').forEach(function(type){
-			window.addEventListener(type, function(event){
+		'click,dblclick,onmousedown,mousemove,keydown,keypress,keyup'.split(',').forEach(function(type){
+			self.canvas.addEventListener(type, function(event){
 				self.captureEvent(event)
 			})
+		})
+		window.addEventListener('mouseup', function (event) {
+			self.captureEvent(event)
 		})
 
 		// resize
@@ -354,15 +403,17 @@ var Fps = Sprite.extend({
 	color: '#000',
 	lastTime: 0,
 	fs: 0,
-	onframe: function () {
-		// console.log('Fps onframe')
-		var now = new Date
-		if (now - this.lastTime > 1000) {
-			this.lastTime = now
-			this.text = this.fs + ' fps'
-			this.fs = 0
-		}
-		this.fs += 1
+	constructor: function () {
+		this.on('frame', function () {
+			// console.log('Fps onframe')
+			var now = new Date
+			if (now - this.lastTime > 1000) {
+				this.lastTime = now
+				this.text = this.fs + ' fps'
+				this.fs = 0
+			}
+			this.fs += 1
+		})
 	}
 })
 
