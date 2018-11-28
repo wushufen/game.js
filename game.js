@@ -254,6 +254,7 @@ var Sprite = Watcher.extend({
 			}
 		}
 	},
+	// 未完成
 	transition: function (options, duration) {
 		duration = duration || 1
 		duration *= 1000
