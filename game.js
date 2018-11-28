@@ -1,7 +1,7 @@
 function Class() {}
-Class.options = {}
 Class.extend = function (options) {
 	var Parent = this
+	Parent.options = Parent.options || {}
 
 	// class
 	// 用eval创建构造，可以指定名字
@@ -125,14 +125,14 @@ var Sprite = Watcher.extend({
 	y: 0,
 	width: 10,
 	height: 10,
-	// 
+	// img
 	src: '',
 	img: null,
-	// 
+	// text
 	text: '',
-	// 
+	// css
 	color: '#333',
-	border: 'none',
+	border: 'sold 0px #ddd',
 	borderRadius: 0,
 	// 
 	font: '14px monospace',
@@ -145,7 +145,6 @@ var Sprite = Watcher.extend({
 		options = options || {}
 		var self = this
 		Object.assign(this, options)
-		console.log('Sprite optins', options.fpsMax, this.fpsMax, this)
 
 		// src
 		if (options.src) {
@@ -282,7 +281,7 @@ var Game = Sprite.extend({
 	width: 0,
 	height: 0,
 	timer: null,
-	fpsMax: 100,
+	fpsMax: 1000,
 	// sprites: [],
 	constructor: function(options){
 		options = options || {}
@@ -329,7 +328,7 @@ var Game = Sprite.extend({
 		this.draw()
 	},
 	loop: function(){
-		console.log('loop')
+		// console.log('loop')
 		var self = this
 		this.captureEvent({type: 'frame'})
 
@@ -356,7 +355,7 @@ var Fps = Sprite.extend({
 	lastTime: 0,
 	fs: 0,
 	onframe: function () {
-		console.log('Fps onframe')
+		// console.log('Fps onframe')
 		var now = new Date
 		if (now - this.lastTime > 1000) {
 			this.lastTime = now
