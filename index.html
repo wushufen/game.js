@@ -28,70 +28,8 @@
 </head>
 
 <body>
-    <select id="countEl">
-        <option value="10">10个小精灵</option>
-        <option value="100">100个小精灵</option>
-        <option value="1000">1000个小精灵</option>
-        <option value="5000">5000个小精灵</option>
-        <option value="10000">10000个小精灵</option>
-        <option value="20000">20000个小精灵</option>
-        <option value="50000">50000个小精灵</option>
-        <option value="100000">100000个小精灵</option>
-        <option value="150000">150000个小精灵</option>
-    </select>
-    <script src="../game.js"></script>
     <script>
-        var game = new Game({
-            isStart: true,
-            // fpsMax: 1,
-        })
-
-        var count = 100
-        countEl.value = count
-        countEl.onchange = function () {
-            count = +this.value
-            create()
-        }
-        create()
-
-        function create() {
-            game.children.length = 0
-
-            for (var i = 0; i <count; i++) {
-                var sprite = new Sprite({
-                    i: i,
-                    x: 100,
-                    y: 100,
-                    width: 20,
-                    height: 20,
-                    src: 'img/mg.jpg',
-                    onframe: function () {
-                        this.x = Math.random() * (game.width - this.width)
-                        this.y = Math.random() * (game.height - this.height)
-                    },
-                    onclick: function(e){
-                        console.log(e, this.i, this.x, this.y)
-                    },
-                    onkeyup: function (e) {
-                        console.log(this, e)
-                    }
-                })
-                game.appendChild(sprite)
-            }
-
-
-            var fps = new Fps({
-                text: 'fps',
-                color: '#0af',
-                onclick: function (event) {
-                    console.log(event)
-                },
-                onkeyup: function (e) {
-                    console.log(this, e)
-                }
-            })
-            game.appendChild(fps)
-        }
+        location.replace('./examples/fps.html')
     </script>
 </body>
 
