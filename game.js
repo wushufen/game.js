@@ -255,7 +255,8 @@ var Sprite = Watcher.extend({
 		}
 	},
 	transition: function (options, duration) {
-		duration = duration || 1000
+		duration = duration || 1
+		duration *= 1000
 
 		var self = this
 		var startTime = +new Date
@@ -322,6 +323,7 @@ var Sprite = Watcher.extend({
 
 var Game = Sprite.extend({
 	name: 'Game',
+	isStart: true,
 	canvas: null,
 	context: null,
 	width: 0,
@@ -403,17 +405,28 @@ var Fps = Sprite.extend({
 	color: '#000',
 	lastTime: 0,
 	fs: 0,
+	hasFistUpdate: false,
 	constructor: function () {
+		this.lastTime = new Date
+
 		this.on('frame', function () {
 			// console.log('Fps onframe')
 			var now = new Date
 			if (now - this.lastTime > 1000) {
+				this.update()
 				this.lastTime = now
-				this.text = this.fs + ' fps'
 				this.fs = 0
+				this.hasFistUpdate = true
 			}
+
 			this.fs += 1
+			if (!this.hasFistUpdate) {
+				this.update()
+			}
 		})
+	},
+	update: function () {
+		this.text = this.fs + ' fps'
 	}
 })
 

@@ -45,8 +45,17 @@
             isStart: true,
             // fpsMax: 1,
         })
+        var fps = new Fps({
+            text: 'fps',
+            color: '#0af',
+            onclick: function (event) {
+                console.log(event)
+            },
+            onframe: function (e) {
+            }
+        })
 
-        var count = 0
+        var count = 1000
         countEl.value = count
         countEl.onchange = function () {
             count = +this.value
@@ -76,21 +85,13 @@
                         console.log(this, e)
                     }
                 })
+
                 game.appendChild(sprite)
+                game.appendChild(fps)
             }
         }
 
 
-        var fps = new Fps({
-            text: 'fps',
-            color: '#0af',
-            onclick: function (event) {
-                console.log(event)
-            },
-            onframe: function (e) {
-            }
-        })
-        game.appendChild(fps)
     </script>
 </body>
 
