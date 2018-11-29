@@ -378,11 +378,17 @@ var Game = Sprite.extend({
 		for(var ontype in this.canvas){
 			if(ontype.match(/^on./)){
 				var type = ontype.substr(2)
-				self.canvas.addEventListener(type, function(event){
-					self.captureEvent(event)
+				self.canvas.addEventListener(type, function(e){
+					self.captureEvent(e)
 				})
 			}
 		}
+		this.canvas.addEventListener('touchstart', function (e) {
+			e.preventDefault()
+		})
+		this.canvas.addEventListener('touchmove', function (e) {
+			e.preventDefault()
+		})
 
 		// resize
 		window.addEventListener('resize', function () {
