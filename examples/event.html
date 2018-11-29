@@ -23,26 +23,27 @@
 	<script src="../game.js"></script>
     <script>
         var game = new Game({
+            fpsMax: 30
         })
 
-        new Fps({
+        var fps = new Fps({
             x: 100,
             y: 100,
             fontSize: 100,
             color: '#0af'
         }).appendTo(game)
 
-        var mg = new Sprite({src: 'img/mg.jpg'}).appendTo(game)
+        var mg = fps//new Sprite({src: 'img/mg.jpg'}).appendTo(game)
             .on('mousedown,touchstart', function (e) {
-                console.log(e)
+                console.log(1, e)
                 this.isMouseDown = true
             })
             .on('mouseup,touchend', function (e) {
-                console.log(e)
+                console.log(2, e)
                 this.isMouseDown = false
             })
-        game.on('mousemove,touchstart', function (e) {
-            console.log(e)
+        game.on('mousemove,touchmove', function (e) {
+            // console.log(e.clientX, e.clientY)
             if (mg.isMouseDown) {
                 mg.x = e.clientX - mg.width/2
                 mg.y = e.clientY - mg.height/2
