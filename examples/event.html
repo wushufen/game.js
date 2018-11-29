@@ -33,17 +33,19 @@
         }).appendTo(game)
 
         var mg = new Sprite({src: 'img/mg.jpg'}).appendTo(game)
-            .on('mousedown', function (e) {
+            .on('mousedown,touchstart', function (e) {
+                console.log(e)
                 this.isMouseDown = true
             })
-            .on('mouseup', function (e) {
-                console.log(e)
-                this.isMouseDown = false
-            })
-        game.on('mousemove', function (e) {
+            // .on('mouseup,touchend', function (e) {
+            //     console.log(e)
+            //     this.isMouseDown = false
+            // })
+        game.on('mousemove,touchstart', function (e) {
+            console.log(e)
             if (mg.isMouseDown) {
-                mg.x = e.offsetX - mg.width/2
-                mg.y = e.offsetY - mg.height/2
+                mg.x = e.clientX - mg.width/2
+                mg.y = e.clientY - mg.height/2
             }
         })
 

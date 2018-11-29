@@ -73,22 +73,30 @@ var EventTarget = Class.extend({
 	events: {},
 	constructor: function(options){},
 	on: function(type, handler) {
-		this.events[type] = this.events[type] || []
-		this.events[type].push(handler)
+		var self = this
+
+		type.split(',').forEach(function (type) {
+			self.events[type] = self.events[type] || []
+			self.events[type].push(handler)
+		})
 
 		return this
 	},
 	off: function(type, handler) {
-		var fns = this.events[type] = this.events[type] || []
-		if (handler) {
-			for (var i = 0; i < fns.length; i++) {
-				if (fns[i] == handler) {
-					fns.splice(i, 1)
+		var self = this
+
+		type.split(',').forEach(function (type) {
+			var fns = self.events[type] = self.events[type] || []
+			if (handler) {
+				for (var i = 0; i < fns.length; i++) {
+					if (fns[i] == handler) {
+						fns.splice(i, 1)
+					}
 				}
+			} else {
+				fns.length = 0
 			}
-		} else {
-			fns.length = 0
-		}
+		})
 
 		return this
 	},
@@ -311,7 +319,7 @@ var Sprite = Watcher.extend({
 		this.trigger(event.type, event)
 
 		this.each(function (child) {
-			if (/^(click|mousedown|mousemove|mouseup)$/.test(event.type)) {
+			if (/^(click|mousedown|mousemove|mouseup|touchstart|touchmove|touchend)$/.test(event.type)) {
 				if (child.isPointOn({x: event.offsetX, y: event.offsetY})) {
 					child.captureEvent(event)
 				}
@@ -337,7 +345,6 @@ var Game = Sprite.extend({
 	height: 0,
 	timer: null,
 	fpsMax: 1000,
-	// sprites: [],
 	constructor: function(options){
 		options = options || {}
 
@@ -360,11 +367,20 @@ var Game = Sprite.extend({
 		var self = this
 
 		// 注册原生事件
-		'click,dblclick,mousedown,mousemove,keydown,keypress,keyup'.split(',').forEach(function(type){
-			self.canvas.addEventListener(type, function(event){
-				self.captureEvent(event)
-			})
-		})
+		// 'click,dblclick,mousedown,mousemove,keydown,keypress,keyup'.split(',').forEach(function(type){
+		// 	self.canvas.addEventListener(type, function(event){
+		// 		self.captureEvent(event)
+		// 	})
+		// })
+		for(var ontype in document.body){
+			if(ontype.match(/^on./)){
+				var type = ontype.substr(2)
+				self.canvas.addEventListener(type, function(event){
+					self.captureEvent(event)
+				})
+			}
+		}
+
 		window.addEventListener('mouseup', function (event) {
 			self.captureEvent(event)
 		})
