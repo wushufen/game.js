@@ -75,6 +75,8 @@ var EventTarget = Class.extend({
 	on: function(type, handler) {
 		this.events[type] = this.events[type] || []
 		this.events[type].push(handler)
+
+		return this
 	},
 	off: function(type, handler) {
 		var fns = this.events[type] = this.events[type] || []
@@ -87,6 +89,8 @@ var EventTarget = Class.extend({
 		} else {
 			fns.length = 0
 		}
+
+		return this
 	},
 	trigger: function(type, event) {
 		event = event || {}
@@ -101,6 +105,8 @@ var EventTarget = Class.extend({
 		if (typeof handler == 'function') {
 			handler.apply(this, [event])
 		}
+
+		return this
 	},
 })
 
@@ -153,7 +159,7 @@ var Sprite = Watcher.extend({
 	zIndex: 0,
 	zoom: 1,
 	// canvas context style
-	font: '14px monospace',
+	// font: '14px monospace',
 	textAlign: 'left',
 	textBaseline: 'top',
 	// 
@@ -189,7 +195,7 @@ var Sprite = Watcher.extend({
 
 		// text
 		if (this.text) {
-			context.font = this.font
+			context.font = this.fontSize + 'px ' + this.fontFamily
 			context.textAlign = this.textAlign
 			context.textBaseline = this.textBaseline
 
@@ -305,7 +311,7 @@ var Sprite = Watcher.extend({
 		this.trigger(event.type, event)
 
 		this.each(function (child) {
-			if (/^(click|mousemove)$/.test(event.type)) {
+			if (/^(click|mousedown|mousemove|mouseup)$/.test(event.type)) {
 				if (child.isPointOn({x: event.offsetX, y: event.offsetY})) {
 					child.captureEvent(event)
 				}
@@ -354,7 +360,7 @@ var Game = Sprite.extend({
 		var self = this
 
 		// 注册原生事件
-		'click,dblclick,onmousedown,mousemove,keydown,keypress,keyup'.split(',').forEach(function(type){
+		'click,dblclick,mousedown,mousemove,keydown,keypress,keyup'.split(',').forEach(function(type){
 			self.canvas.addEventListener(type, function(event){
 				self.captureEvent(event)
 			})
