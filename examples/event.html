@@ -37,10 +37,10 @@
                 console.log(e)
                 this.isMouseDown = true
             })
-            // .on('mouseup,touchend', function (e) {
-            //     console.log(e)
-            //     this.isMouseDown = false
-            // })
+            .on('mouseup,touchend', function (e) {
+                console.log(e)
+                this.isMouseDown = false
+            })
         game.on('mousemove,touchstart', function (e) {
             console.log(e)
             if (mg.isMouseDown) {
