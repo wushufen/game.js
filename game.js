@@ -344,7 +344,7 @@ var Game = Sprite.extend({
 	width: 0,
 	height: 0,
 	timer: null,
-	fpsMax: 1000,
+	fps: 1000,
 	constructor: function(options){
 		options = options || {}
 
@@ -409,7 +409,7 @@ var Game = Sprite.extend({
 		this.update()
 		this.timer = setTimeout(function(){
 			self.loop()
-		}, 1000/ this.fpsMax)
+		}, 1000/ this.fps)
 	},
 	start: function(){
 		this.pause()
