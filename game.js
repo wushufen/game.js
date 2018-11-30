@@ -213,6 +213,9 @@ var Sprite = Watcher.extend({
 			context.lineWidth = 2
 			context.strokeText(this.text, this.x, this.y)
 			context.fillText(this.text, this.x, this.y)
+
+			this.width = context.measureText(this.text).width
+			this.height = this.fontSize
 		}
 
 		// children
@@ -316,11 +319,16 @@ var Sprite = Watcher.extend({
 	},
 	// 事件捕获模型，从父到子传播
 	captureEvent: function (event) {
+        if (event.changedTouches) {
+            var touch = event.changedTouches[0]
+            event.clientX = touch.clientX
+            event.clientY = touch.clientY
+        }
 		this.trigger(event.type, event)
 
 		this.each(function (child) {
 			if (/^(click|mousedown|mousemove|mouseup|touchstart|touchmove|touchend)$/.test(event.type)) {
-				if (child.isPointOn({x: event.offsetX, y: event.offsetY})) {
+				if (child.isPointOn({x: event.clientX, y: event.clientY})) {
 					child.captureEvent(event)
 				}
 			} else {
@@ -367,22 +375,19 @@ var Game = Sprite.extend({
 		var self = this
 
 		// 注册原生事件
-		// 'click,dblclick,mousedown,mousemove,keydown,keypress,keyup'.split(',').forEach(function(type){
-		// 	self.canvas.addEventListener(type, function(event){
-		// 		self.captureEvent(event)
-		// 	})
-		// })
-		for(var ontype in document.body){
+		for(var ontype in this.canvas){
 			if(ontype.match(/^on./)){
 				var type = ontype.substr(2)
-				self.canvas.addEventListener(type, function(event){
-					self.captureEvent(event)
+				self.canvas.addEventListener(type, function(e){
+					self.captureEvent(e)
 				})
 			}
 		}
-
-		window.addEventListener('mouseup', function (event) {
-			self.captureEvent(event)
+		this.canvas.addEventListener('touchstart', function (e) {
+			e.preventDefault()
+		})
+		this.canvas.addEventListener('touchmove', function (e) {
+			e.preventDefault()
 		})
 
 		// resize
