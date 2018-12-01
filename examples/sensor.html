@@ -25,7 +25,8 @@
     <script>
 
         var game = new Game
-        var fps = new Fps({fontSize:30,color:'#0af'})
+        var fps = new Fps({fontSize:30,color:'#0af'}).appendTo(game)
+        var mg = new Sprite({src:'img/mg.jpg', width:50,height:50})
             .appendTo(game)
             .on('deviceorientation', function (e) {
                 console.log(parseInt(e.alpha), parseInt(e.beta), parseInt(e.gamma))
@@ -36,8 +37,8 @@
                 var height = game.height - this.height
                 var hr = (e.beta- (0)) / (45- (0))
 
-                this.x = Math.min(width*wr, width)
-                this.y = Math.min(height*hr, height)
+                this.x = Math.max(0, Math.min(width*wr, width))
+                this.y = Math.max(0, Math.min(height*hr, height))
                 // console.log(this.x, this.y)
             })
 
