@@ -23,18 +23,23 @@
 <body>
 	<script src="../game.js"></script>
     <script>
-        function convert(n) {
-            0
-            90
-            180
-            -90
-            -180
-        }
 
-        var fps = new Fps({fontSize:30,color:'#0af'}).appendTo(new Game).on('deviceorientation', function (e) {
-            console.log(parseInt(e.alpha), parseInt(e.beta), parseInt(e.gamma))
-        })
+        var game = new Game
+        var fps = new Fps({fontSize:30,color:'#0af'})
+            .appendTo(game)
+            .on('deviceorientation', function (e) {
+                console.log(parseInt(e.alpha), parseInt(e.beta), parseInt(e.gamma))
 
+                var width = game.width - this.width
+                var wr = (e.gamma- (-20)) / (20- (-20))
+
+                var height = game.height - this.height
+                var hr = (e.beta- (0)) / (45- (0))
+
+                this.x = Math.min(width*wr, width)
+                this.y = Math.min(height*hr, height)
+                // console.log(this.x, this.y)
+            })
 
     </script>
 </body>
