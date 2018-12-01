@@ -16,19 +16,26 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="format-detection" content="telephone=no">
     <meta name="msapplication-tap-highlight" content="no">
-    <title>wsf game.js - transition</title>
+    <title>wsf game.js - sensor</title>
+    <script src="https://wusfen.github.io/console.js/dist/console.js"></script>
 </head>
 
 <body>
 	<script src="../game.js"></script>
     <script>
-        var fps = new Fps({fontSize:30,color:'red'})
-            .appendTo(new Game({fps:500}))
-            .transition({x:300, y:300}, function(){
-                this.transition({x:200,y:400,color:'#0af'}, function () {
-                    this.transition({x:100,y:200, color:'#080'})
-                })
-            })
+        function convert(n) {
+            0
+            90
+            180
+            -90
+            -180
+        }
+
+        var fps = new Fps({fontSize:30,color:'#0af'}).appendTo(new Game).on('deviceorientation', function (e) {
+            console.log(parseInt(e.alpha), parseInt(e.beta), parseInt(e.gamma))
+        })
+
+
     </script>
 </body>
 

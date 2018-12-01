@@ -348,6 +348,13 @@ var Sprite = Watcher.extend({
 
 		return this
 	},
+	// this.animation([
+	// 	{x:200, y:400},
+	// 	{x:100, y:300}	
+	// ])
+	animation: function (list, options) {
+		// body...
+	},
 	isPointOn: function(point){
 		return point.x >= this.x
 			&& point.x <= this.x + this.width
@@ -434,6 +441,11 @@ var Game = Sprite.extend({
 		})
 		this.canvas.addEventListener('touchmove', function (e) {
 			e.preventDefault()
+		})
+
+		// 传感器
+		window.addEventListener('deviceorientation', function(e) {
+			self.captureEvent(e)
 		})
 
 		// resize
