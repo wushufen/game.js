@@ -212,10 +212,10 @@ var Sprite = Watcher.extend({
 			context.textAlign = this.textAlign
 			context.textBaseline = this.textBaseline
 
-			context.strokeStyle = '#fff'
+			context.strokeStyle = 'rgba(255,255,255,.4)'
 			context.fillStyle = this.color
 
-			context.lineWidth = 2
+			context.lineWidth = 1
 			context.strokeText(this.text, this.x, this.y)
 			context.fillText(this.text, this.x, this.y)
 

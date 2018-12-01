@@ -18,6 +18,9 @@
     <meta name="msapplication-tap-highlight" content="no">
     <title>wsf game.js - sensor</title>
     <script src="https://wusfen.github.io/console.js/dist/console.js"></script>
+    <style>
+        html{background: #757575}
+    </style>
 </head>
 
 <body>
@@ -26,7 +29,7 @@
 
         var game = new Game
 
-        var fps = new Fps({fontSize:30,color:'#0af'}).appendTo(game)
+        var fps = new Fps({fontSize:20,color:'#xxx'}).appendTo(game)
 
         var mg = new Sprite({src:'img/ball.png', width:50,height:50}).appendTo(game)
             .on('deviceorientation', function (e) {
