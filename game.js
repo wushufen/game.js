@@ -84,10 +84,11 @@ var EventTarget = Class.extend({
 	},
 	off: function(type, handler) {
 		var self = this
+		var argumentsLength = arguments.length
 
 		type.split(',').forEach(function (type) {
 			var fns = self.events[type] = self.events[type] || []
-			if (handler) {
+			if (argumentsLength == 2) {
 				for (var i = 0; i < fns.length; i++) {
 					if (fns[i] == handler) {
 						fns.splice(i, 1)
@@ -125,6 +126,8 @@ var Watcher = EventTarget.extend({
 	name: 'Watcher',
 	watchs: {},
 	watch: function (key, fn) {
+
+		return this
 	}
 })
 
@@ -192,6 +195,8 @@ var Sprite = Watcher.extend({
 		this.trigger('create')
 	},
 	draw: function(context){
+		this.trigger('frame')
+
 		this.context = context || this.context || this.parent.context
 		if (!this.context) return
 		var context = this.context
@@ -222,6 +227,8 @@ var Sprite = Watcher.extend({
 		this.each(function(child){
 			child.draw()
 		})
+
+		return this
 	},
 	appendTo: function (parent) {
 		parent.appendChild(this)
@@ -255,6 +262,8 @@ var Sprite = Watcher.extend({
 		if (!child) {
 			this.children.length = 0
 		}
+
+		return this
 	},
 	remove: function(){
 		if (this.parent) {
@@ -270,42 +279,74 @@ var Sprite = Watcher.extend({
 				break
 			}
 		}
+
+		return this
 	},
-	// 未完成
-	transition: function (options, duration) {
-		duration = duration || 1
+	transition: function (options, duration, callback) {
+		if (arguments.length == 1) {
+			duration = 1
+		}
+		if (arguments.length == 2) {
+			if (typeof duration == 'function') {
+				callback = duration
+				duration = 1
+			}
+		}
 		duration *= 1000
 
 		var self = this
+
 		var startTime = +new Date
 		var lastTime = startTime
 		var endTime = startTime + duration
-		var keys = Object.keys(options)
-		var dones = 0
 
-		var handler
-		this.on('frame', handler = function () {
+		var startOptions = Object.assign({}, this)
+		var keys = Object.keys(options)
+		var dones = {}
+
+		this.off('frame', this.transitionHandler)
+		this.on('frame', this.transitionHandler = function () {
 			var now = +new Date
 
 			for(var key in options){
-				var value = options[key]
-				if (typeof value == 'number') {
-					if (Math.abs(self[key]) < Math.abs(value)) {
-						self[key] += (now-lastTime)/duration * value
+				var endValue = options[key]
+
+				if (typeof endValue == 'number') {
+					var startValue = startOptions[key] || 0
+					var diffValue = endValue - startValue
+
+					this[key] += (now-lastTime)/duration * diffValue
+
+					if (diffValue>0) {
+						if (this[key] >= endValue) {
+							this[key] = endValue
+							dones[key] = true
+						}
 					} else {
-						dones += 1
+						if (this[key] <= endValue) {
+							this[key] = endValue
+							dones[key] = true
+						}
 					}
+
 				} else {
-					dones += 1
+					this[key] = endValue
+					dones[key] = true
 				}
 			}
 			lastTime = now
 
-			if (dones == keys.length) {
-				Object.assign(self, options)
-				self.off('frame', handler)
+			if (Object.keys(dones).length == keys.length) {
+				this.off('frame', this.transitionHandler)
+				this.trigger('transitionend')
+				console.log('transitionend')
+				if (callback) {
+					callback.call(this)
+				}
 			}
 		})
+
+		return this
 	},
 	isPointOn: function(point){
 		return point.x >= this.x
@@ -316,6 +357,8 @@ var Sprite = Watcher.extend({
 	hitTest: function(target, fn){
 		var bool = false
 		if (true) {}
+
+		return this
 	},
 	// 事件捕获模型，从父到子传播
 	captureEvent: function (event) {
@@ -335,9 +378,12 @@ var Sprite = Watcher.extend({
 				child.captureEvent(event)
 			}
 		})
+
+		return this
 	},
 	bubbleEvent: function (event) {
-		
+
+		return this
 	},
 })
 
@@ -365,13 +411,13 @@ var Game = Sprite.extend({
 		this.context = canvas.getContext('2d')
 		this.resize()
 
-		this.addEventListener()
+		this.listen()
 
 		if (this.isStart) {
 			this.start()
 		}
 	},
-	addEventListener: function(){
+	listen: function(){
 		var self = this
 
 		// 注册原生事件
@@ -391,7 +437,7 @@ var Game = Sprite.extend({
 		})
 
 		// resize
-		window.addEventListener('resize', function () {
+		addEventListener('resize', function () {
 			self.resize()
 		})
 
@@ -409,7 +455,7 @@ var Game = Sprite.extend({
 	loop: function(){
 		// console.log('loop')
 		var self = this
-		this.captureEvent({type: 'frame'})
+		// this.captureEvent({type: 'frame'}) // || sprite.draw(){this.trigger('frame')}
 
 		this.update()
 		this.timer = setTimeout(function(){
