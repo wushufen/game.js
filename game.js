@@ -153,8 +153,8 @@ var Sprite = Watcher.extend({
 	right: 'auto',
 	top: 'auto',
 	bottom: 'auto',
-	background: 'none',
-	border: 'sold 0px #ddd',
+	// background: 'none',
+	// border: 'sold 0px #ddd',
 	borderRadius: 0,
 	padding: 0,
 	color: '#333',
@@ -201,6 +201,37 @@ var Sprite = Watcher.extend({
 		if (!this.context) return
 		var context = this.context
 
+		// border & background
+		if (this.border || this.background) {
+			var x = this.x
+			var y = this.y
+			var w = this.width
+			var h = this.height
+			var r = this.borderRadius
+
+			context.beginPath()
+			context.moveTo(x+r, y)
+			context.lineTo(x+w-r, y)
+			context.arc(x+w-r, y+r, r, -Math.PI/2, 0)
+			context.lineTo(x+w, y+h-r)
+			context.arc(x+w-r, y+h-r, r, 0, Math.PI/2)
+			context.lineTo(x+r, y+h)
+			context.arc(x+r, y+h-r, r, Math.PI/2, Math.PI)
+			context.lineTo(x, y+r)
+			context.arc(x+r, y+r, r, Math.PI, -Math.PI/2)
+		}
+
+		// background
+		if (this.background) {
+			context.shadowBlur = 10
+			context.shadowColor = '#555'
+			context.shadowOffsetX = 3
+			context.shadowOffsetY = 3
+			context.fillStyle = this.background
+			context.fill()
+			context.shadowColor = 'rgba(0,0,0,0)'
+		}
+
 		// img
 		if (this.img) {
 			context.drawImage(this.img, this.x, this.y, this.width, this.height)
@@ -214,13 +245,27 @@ var Sprite = Watcher.extend({
 
 			context.strokeStyle = 'rgba(255,255,255,.4)'
 			context.fillStyle = this.color
-
 			context.lineWidth = 1
-			context.strokeText(this.text, this.x, this.y)
-			context.fillText(this.text, this.x, this.y)
 
-			this.width = context.measureText(this.text).width
-			this.height = this.fontSize
+			var p = this.padding
+			var x = this.x + this.padding
+			var y = this.y + this.padding
+			var w = context.measureText(this.text).width
+			var h = this.fontSize
+			var wp = w + p*2
+			var hp = h + p*2
+			context.strokeText(this.text, x, y)
+			context.fillText(this.text, x, y)
+
+			this.width = Math.max(this.width, wp)
+			this.height = Math.max(this.height, hp)
+		}
+
+		// border
+		if (this.border) {
+			context.lineWidth = 1
+			context.strokeStyle = this.color
+			context.stroke()
 		}
 
 		// children
@@ -444,7 +489,7 @@ var Game = Sprite.extend({
 		})
 
 		// 传感器
-		window.addEventListener('deviceorientation', function(e) {
+		addEventListener('deviceorientation', function(e) {
 			self.captureEvent(e)
 		})
 

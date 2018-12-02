@@ -16,30 +16,34 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="format-detection" content="telephone=no">
     <meta name="msapplication-tap-highlight" content="no">
-    <title>wsf game.js - transition</title>
+    <title>wsf game.js游戏引擎</title>
 </head>
 
 <body>
 	<script src="../game.js"></script>
     <script>
-        var game = new Game({fps:24})
-        var fps = new Fps({fontSize:30,color:'red'})
-            .appendTo(game)
-            .transition({x:300, y:300}, function(){
-                this.transition({x:200,y:400,color:'#0af'}, function () {
-                    this.transition({x:100,y:200, color:'#080'})
-                })
-            })
+        var game = new Game({fps:3})
+            .append(new Fps)
 
         var sprite = new Sprite({
-            x: 10,
-            y: 20,
+            x: 100,
+            y: 100,
             width: 100,
-            height: 100,
-            // text: 'sprite',
-            border: 'solid 1px #ddd',
+            // height: 100,
+            // border: 'solid 1px #ddd',
             borderRadius: 5,
-        }).appendTo(game)
+            color: '#0af',
+            background: '#eee',
+            shadow: 'todo',
+            padding: 14,
+            text: 'sprite',
+        })
+            .appendTo(game)
+            .on('deviceoritantion', function () {
+                
+            })
+
+
 
     </script>
 </body>

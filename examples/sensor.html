@@ -19,7 +19,7 @@
     <title>wsf game.js - sensor</title>
     <script src="https://wusfen.github.io/console.js/dist/console.js"></script>
     <style>
-        html{background: #757575}
+        /*html{background: #757575}*/
     </style>
 </head>
 
@@ -27,22 +27,42 @@
 	<script src="../game.js"></script>
     <script>
 
-        var game = new Game
+        var game = new Game({fps:3})
+            .append(new Fps)
 
-        var fps = new Fps({fontSize:20,color:'#xxx'}).appendTo(game)
-
-        var mg = new Sprite({src:'img/ball.png', width:50,height:50}).appendTo(game)
+        var mg = new Sprite({
+            x: 100,
+            y: 100,
+            // width: 100,
+            // height: 100,
+            // border: 'solid 1px #ddd',
+            borderRadius: 10,
+            color: '#000',
+            background: '#88f',
+            shadow: 'todo',
+            padding: 14,
+            text: 'sensor',
+        })
+            .appendTo(game)
             .on('deviceorientation', function (e) {
-                console.log(parseInt(e.alpha), parseInt(e.beta), parseInt(e.gamma))
+                console.log(
+                    'alpha', parseInt(e.alpha),
+                    'beta', parseInt(e.beta),
+                    'gama', parseInt(e.gamma)
+                )
 
+                // -20 ~ 20
                 var width = game.width - this.width
                 var wr = (e.gamma- (-20)) / (20- (-20))
 
+                // 30 ~ 70
                 var height = game.height - this.height
                 var hr = (e.beta- (30)) / (70- (30))
 
                 this.x = Math.max(0, Math.min(width*wr, width))
                 this.y = Math.max(0, Math.min(height*hr, height))
+
+                this.text = 'x:' + parseInt(this.x) + ' y:' + parseInt(this.y)
             })
 
     </script>
