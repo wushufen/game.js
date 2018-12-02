@@ -16,7 +16,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="format-detection" content="telephone=no">
     <meta name="msapplication-tap-highlight" content="no">
-    <title>wsf game.js游戏引擎性能帧率测试</title>
+    <title>game.js - 游戏引擎帧率测试</title>
     <style type="text/css">
         #countEl{
             position: absolute;
@@ -41,19 +41,7 @@
     </select>
 	<script src="../game.js"></script>
     <script>
-        var game = new Game({
-            isStart: true,
-            // fpsMax: 1,
-        })
-        var fps = new Fps({
-            text: 'fps',
-            color: '#0af',
-            onclick: function (event) {
-                console.log(event)
-            },
-            onframe: function (e) {
-            }
-        })
+        var game = new Game()
 
         var count = 1000
         countEl.value = count
@@ -73,7 +61,10 @@
                     y: 100,
                     width: 20,
                     height: 20,
-                    src: 'img/mg.jpg',
+                    borderRadius: 10,
+                    // src: 'img/mg.jpg',
+                    background: '#fff',
+                    shadow: '#0af',
                     onframe: function () {
                         this.x = Math.random() * (game.width - this.width)
                         this.y = Math.random() * (game.height - this.height)
@@ -88,7 +79,7 @@
 
                 game.appendChild(sprite)
             }
-            game.appendChild(fps)
+            game.appendChild(new Fps)
         }
 
 
