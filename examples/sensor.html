@@ -30,7 +30,17 @@
         var game = new Game({fps:300})
             .append(new Fps)
 
-        var mg = new Sprite({
+        var x = new Sprite({
+            y: 14,
+            text: 'x',
+        }).appendTo(game)
+
+        var y = new Sprite({
+            y: 28,
+            text: 'y',
+        }).appendTo(game)
+
+        var sprite = new Sprite({
             x: 100,
             y: 100,
             width: 100,
@@ -40,8 +50,8 @@
             // color: '#000',
             // background: '#88f',
             background: '#fff',
-            shadow: 'todo',
-            padding: 14,
+            shadow: '#0af',
+            padding: 25,
             // text: 'sensor',
         })
             .appendTo(game)
@@ -63,7 +73,8 @@
                 this.x = Math.max(0, Math.min(width*wr, width))
                 this.y = Math.max(0, Math.min(height*hr, height))
 
-                // this.text = 'x:' + parseInt(this.x) + ' y:' + parseInt(this.y)
+                x.text = 'x:' + (this.x)
+                y.text = 'y:' + (this.y)
             })
 
     </script>

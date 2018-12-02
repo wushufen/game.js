@@ -153,8 +153,9 @@ var Sprite = Watcher.extend({
 	right: 'auto',
 	top: 'auto',
 	bottom: 'auto',
-	// background: 'none',
-	// border: 'sold 0px #ddd',
+	background: '',
+	shadow: '',
+	border: '',
 	borderRadius: 0,
 	padding: 0,
 	color: '#333',
@@ -165,7 +166,6 @@ var Sprite = Watcher.extend({
 	fontWeight: 'normal',
 	textShadow: 'none',
 	boxShadow: 'none',
-	shadow: '??',
 	opacity: 1,
 	zIndex: 0,
 	zoom: 1,
@@ -219,19 +219,22 @@ var Sprite = Watcher.extend({
 		context.lineTo(x, y+r)
 		context.arc(x+r, y+r, r, Math.PI, -Math.PI/2)
 
+		// shadow
+		if (this.shadow) {
+			context.shadowBlur = 10
+			context.shadowColor = this.shadow
+			// context.shadowOffsetX = 3
+			// context.shadowOffsetY = 3
+		}
 		// background
 		if (this.background) {
-			context.shadowBlur = 10
-			context.shadowColor = '#555'
-			context.shadowOffsetX = 3
-			context.shadowOffsetY = 3
 			context.fillStyle = this.background
-			context.fill()
-			context.shadowColor = 'rgba(0,0,0,0)'
 		}
-
-		// shadow
-		if (this.shadow) {}
+		if (this.background||this.shadow) {
+			context.fill()
+			// context.shadowColor = 'rgba(0,0,0,0)'
+			// context.fillStyle = 'rgba(0,0,0,0)'
+		}
 
 		// img
 		if (this.img) {
