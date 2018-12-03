@@ -139,6 +139,10 @@ var Sprite = Watcher.extend({
 	// pos
 	x: 0,
 	y: 0,
+	// Transformations
+	translate: [0, 0],
+	rotate: 0,
+	scale: [1, 1],
 	// img
 	src: '',
 	img: null,
@@ -168,7 +172,6 @@ var Sprite = Watcher.extend({
 	boxShadow: 'none',
 	opacity: 1,
 	zIndex: 0,
-	zoom: 1,
 	// canvas context style
 	// font: '14px monospace',
 	textAlign: 'left',
@@ -200,6 +203,12 @@ var Sprite = Watcher.extend({
 		this.context = context || this.context || this.parent.context
 		if (!this.context) return
 		var context = this.context
+
+		context.save()
+		context.translate.apply(context, this.translate)
+		context.rotate(this.rotate)
+		context.scale.apply(context, this.scale)
+		context.globalAlpha = this.opacity
 
 		var x = this.x
 		var y = this.y
@@ -271,6 +280,8 @@ var Sprite = Watcher.extend({
 			this.width = Math.max(this.width, wp)
 			this.height = Math.max(this.height, hp)
 		}
+
+		context.restore()
 
 		// children
 		this.each(function(child){
