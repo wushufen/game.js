@@ -146,6 +146,7 @@ var Sprite = Watcher.extend({
 	// img
 	src: '',
 	img: null,
+	video: null,
 	// text
 	text: '',
 	// css
@@ -248,6 +249,11 @@ var Sprite = Watcher.extend({
 		// img
 		if (this.img) {
 			context.drawImage(this.img, this.x, this.y, this.width, this.height)
+		}
+
+		// video
+		if (this.video) {
+			context.drawImage(this.video, this.x, this.y)
 		}
 
 		// border
