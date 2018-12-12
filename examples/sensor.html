@@ -20,18 +20,29 @@
     <script src="https://wusfen.github.io/console.js/dist/console.js"></script>
     <style>
         /*html{background: #757575}*/
+        iframe {
+            position: absolute;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+        }
     </style>
 </head>
 
 <body>
-	<script src="../game.js"></script>
+    <a href="http://baidu.com">baidu</a>
+    <iframe src="https://baidu.com" frameborder="0"></iframe>
+    <script src="../game.js"></script>
     <script>
 
-        var game = new Game({fps:30})
+        var game = new Game({ fps: 30 })
             .append(new Fps)
 
-        var x = new Sprite({y: 14, text: 'x', }).appendTo(game)
-        var y = new Sprite({y: 28, text: 'y', }).appendTo(game)
+        var x = new Sprite({ y: 14, text: 'x', }).appendTo(game)
+        var y = new Sprite({ y: 28, text: 'y', }).appendTo(game)
 
         var sprite = new Sprite({
             x: 100,
@@ -61,14 +72,14 @@
 
                 // -20 ~ 20
                 var width = game.width - this.width
-                var wr = (e.gamma- (-20)) / (20- (-20))
+                var wr = (e.gamma - (-20)) / (20 - (-20))
 
                 // 30 ~ 70
                 var height = game.height - this.height
-                var hr = (e.beta- (30)) / (70- (30))
+                var hr = (e.beta - (30)) / (70 - (30))
 
-                this.x = Math.max(0, Math.min(width*wr, width))
-                this.y = Math.max(0, Math.min(height*hr, height))
+                this.x = Math.max(0, Math.min(width * wr, width))
+                this.y = Math.max(0, Math.min(height * hr, height))
 
                 x.text = 'x:' + (this.x)
                 y.text = 'y:' + (this.y)
