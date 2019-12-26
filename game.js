@@ -437,11 +437,11 @@ var Sprite = Watcher.extend({
     },
     // 事件捕获模型，从父到子传播
     captureEvent: function (event) {
-                if (event.changedTouches) {
-                        var touch = event.changedTouches[0]
-                        event.clientX = touch.clientX
-                        event.clientY = touch.clientY
-                }
+        if (event.changedTouches) {
+            var touch = event.changedTouches[0]
+            event.clientX = touch.clientX
+            event.clientY = touch.clientY
+        }
         this.trigger(event.type, event)
 
         this.each(function (child) {
