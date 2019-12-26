@@ -24,17 +24,25 @@
     <script src="../game.js"></script>
     <script>
         var game = new Game({
-            fps: 30,
+            fps: 60,
+            background: '#eee'
         })
 
         var fps = new Fps({
             x: 100,
             y: 100,
             fontSize: 100,
-            color: '#0af'
+            color: '#0af',
+            border: 'solid 1px #ddd',
+            borderRadius: 5,
+            // padding: 10,
+            update: function () {
+                this.text = this.fs + 'abfg中国'
+            }
         }).appendTo(game)
 
-        var mg = fps//new Sprite({src: 'img/mg.jpg'}).appendTo(game)
+        var mg = fps
+            //new Sprite({src: 'img/mg.jpg'}).appendTo(game)
             .on('mousedown,touchstart', function (e) {
                 console.log(1, e)
                 this.isMouseDown = true

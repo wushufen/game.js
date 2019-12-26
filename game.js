@@ -68,8 +68,6 @@ Class.extend = function (options) {
 }
 
 
-
-
 var EventTarget = Class.extend({
     name: 'EventTarget',
     events: {},
@@ -122,8 +120,6 @@ var EventTarget = Class.extend({
 })
 
 
-
-
 var Watcher = EventTarget.extend({
     name: 'Watcher',
     watchs: {},
@@ -132,8 +128,6 @@ var Watcher = EventTarget.extend({
         return this
     }
 })
-
-
 
 
 var Sprite = Watcher.extend({
@@ -166,11 +160,13 @@ var Sprite = Watcher.extend({
     borderRadius: 0,
     padding: 0,
     color: '#333',
-    fontFamily: 'monospace',
-    fontSize: 14,
-    lineHeight: 1.25,
     fontStyle: 'normal',
+    fontVariant: 'normal',
     fontWeight: 'normal',
+    fontSize: 16,
+    lineHeight: 16,
+    fontFamily: 'normal',
+    // fontFamily: 'monospace',
     textShadow: 'none',
     boxShadow: 'none',
     opacity: 1,
@@ -178,7 +174,8 @@ var Sprite = Watcher.extend({
     // canvas context style
     // font: '14px monospace',
     textAlign: 'left',
-    textBaseline: 'top',
+    textBaseline: 'hanging',
+    // textBaseline: 'top',
     // 
     parent: null,
     children: [],
@@ -213,13 +210,13 @@ var Sprite = Watcher.extend({
         context.scale.apply(context, this.scale)
         context.globalAlpha = this.opacity
 
+        // border，background，shadow 边界
         var x = this.x
         var y = this.y
         var w = this.width
         var h = this.height
         var r = this.borderRadius
         var p = this.padding
-
         context.beginPath()
         context.moveTo(x+r, y)
         context.lineTo(x+w-r, y)
@@ -267,7 +264,12 @@ var Sprite = Watcher.extend({
 
         // text
         if (this.text) {
-            context.font = this.fontSize + 'px ' + this.fontFamily
+            context.font = this.fontStyle
+                + ' ' + this.fontVariant
+                + ' ' + this.fontWeight
+                + ' ' + this.fontSize + 'px/' + this.lineHeight + 'px'
+                + ' ' + this.fontFamily
+                
             context.textAlign = this.textAlign
             context.textBaseline = this.textBaseline
 
@@ -282,8 +284,8 @@ var Sprite = Watcher.extend({
             var h = this.fontSize
             var wp = w + p*2
             var hp = h + p*2
-            context.strokeText(this.text, x, y)
             context.fillText(this.text, x, y)
+            context.strokeText(this.text, x, y)
 
             this.width = Math.max(this.width, wp)
             this.height = Math.max(this.height, hp)
@@ -463,8 +465,6 @@ var Sprite = Watcher.extend({
 })
 
 
-
-
 var Game = Sprite.extend({
     name: 'Game',
     isStart: true,
@@ -495,7 +495,7 @@ var Game = Sprite.extend({
     listen: function(){
         var self = this
 
-        // 注册原生事件
+        // 注册事件委托
         for(var ontype in this.canvas){
             if(ontype.match(/^on./)){
                 var type = ontype.substr(2)
@@ -504,23 +504,22 @@ var Game = Sprite.extend({
                 })
             }
         }
+        // 传感器
+        addEventListener('deviceorientation', function(e) {
+            self.captureEvent(e)
+        })
+        // resize
+        addEventListener('resize', function () {
+            self.resize()
+        })
+
+        // 阻止默认拖动
         this.canvas.addEventListener('touchstart', function (e) {
             e.preventDefault()
         })
         this.canvas.addEventListener('touchmove', function (e) {
             e.preventDefault()
         })
-
-        // 传感器
-        addEventListener('deviceorientation', function(e) {
-            self.captureEvent(e)
-        })
-
-        // resize
-        addEventListener('resize', function () {
-            self.resize()
-        })
-
     },
     resize: function (width, height) {
         this.width = width || window.innerWidth
@@ -562,25 +561,23 @@ var Fps = Sprite.extend({
     hasFistUpdate: false,
     constructor: function () {
         this.lastTime = new Date
+    },
+    onframe: function () {
+        var now = new Date
+        if (now - this.lastTime > 1000) {
+            this.update()
+            this.lastTime = now
+            this.fs = 0
+            this.hasFistUpdate = true
+        }
 
-        this.on('frame', function () {
-            // console.log('Fps onframe')
-            var now = new Date
-            if (now - this.lastTime > 1000) {
-                this.update()
-                this.lastTime = now
-                this.fs = 0
-                this.hasFistUpdate = true
-            }
-
-            this.fs += 1
-            if (!this.hasFistUpdate) {
-                this.update()
-            }
-        })
+        this.fs += 1
+        if (!this.hasFistUpdate) {
+            this.update()
+        }
     },
     update: function () {
-        this.text = this.fs + ' fps'
+        this.text = this.fs + 'fps'
     }
 })
 
