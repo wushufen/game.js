@@ -1,18 +1,17 @@
 function Class() {}
 Class.extend = function (options) {
-	var Parent = this
-	Parent.options = Parent.options || {}
+	var Class = this
+	Class.options = Class.options || {}
 
-	// class
-	// 用eval创建构造，可以指定名字
-	var Class = eval('(function ' + (options.name||'Class') + '(){_Class.apply(this,arguments)})')
-	function _Class() {
-		// 【实例引用类型属性副本】
+	// SubClass
+	function SubClass() {
+
+		// 【实例属性引用类型副本】
+		// 如果是原生【数组】或【对象】作为直接属性
+		// 则给每个实例复制一份，以免所有实例共用
 		for(var key in this){
 			var value = this[key]
 
-			// 如果是原生【数组】或【对象】作为直接属性
-			// 则给每个实例复制一份，以免所有实例共用
 			if (value && value.constructor == Array) {
 				this[key] = [].concat(value)
 			}
@@ -25,7 +24,7 @@ Class.extend = function (options) {
 		}
 
 		// 是否执行初始化
-		if (Class.__isNotSelfNew) return
+		if (SubClass.__isNotSelfNew) return
 
 		// 【父类初始化】
 		// 父类初始化的this绑定到当前类的实例
@@ -36,33 +35,36 @@ Class.extend = function (options) {
 		options.constructor.apply(this, arguments)
 	}
 
+	// eval 修改类名
+	SubClass = eval('('+ SubClass.toString().replace('SubClass', options.name||'Class') +')')
+
 	// 【继承父类】
 	// 【父类方法属性】
 	// prototype是父类的一个实例
 	// __isNotSelfNew: 父类的初始化方法此时暂不执行
 	// 当创建实例时，把父类的初始化方法绑定到当前实例
-	Parent.__isNotSelfNew = true
-	Class.prototype = new Parent
-	delete Parent.__isNotSelfNew
+	Class.__isNotSelfNew = true
+	SubClass.prototype = new Class
+	delete Class.__isNotSelfNew
 
 	// 【本类方法属性】
 	// 复制options的方法到原型
 	for(var key in options){
 		var value = options[key]
-		Class.prototype[key] = value
+		SubClass.prototype[key] = value
 	}
 	// 修正prototype.constructor
-	Class.prototype.constructor = Class
-	Class.Parent = Parent
-	Class.options = options
+	SubClass.prototype.constructor = SubClass
+	SubClass.Parent = Class
+	SubClass.options = options
 
 	// super
-	Class.prototype.constructor.super = Parent.options.constructor
+	SubClass.prototype.constructor.super = Class.options.constructor
 
-	// 当前类同样可以用.extend派生子类
-	Class.extend = Parent.extend
+	// 子类同样可以用 .extend 再派生子类
+	SubClass.extend = Class.extend
 
-	return Class
+	return SubClass
 }
 
 
