@@ -1,71 +1,38 @@
 function Class() {}
-Class.extend = function (options) {
-    var Class = this
-    Class.options = Class.options || {}
-
-    // SubClass
-    function SubClass() {
-
-        // 【实例属性引用类型副本】
-        // 如果是原生【数组】或【对象】作为直接属性
-        // 则给每个实例复制一份，以免所有实例共用
+Class.extend = function (props) {
+    var Super = this
+    function Sub() {
+        // 引用属性副本
         for(var key in this){
             var value = this[key]
-
             if (value && value.constructor == Array) {
                 this[key] = [].concat(value)
             }
             if (value && value.constructor == Object) {
-                this[key] = {}
-                for(var k in value){
-                    this[key][k] = value[k]
-                }
+                this[key] = Object.assign({}, value)
             }
         }
 
-        // 是否执行初始化
-        if (SubClass.__isNotSelfNew) return
-
-        // 【父类初始化】
-        // 父类初始化的this绑定到当前类的实例
-        this.constructor.super.apply(this, arguments)
-
-        // 【本类初始化】
-        // options.constructor作为初始化方法，不是真正构造函数
-        options.constructor.apply(this, arguments)
+        Super.props && Super.props.constructor && Super.props.constructor.apply(this, arguments)
+        props.constructor && props.constructor.apply(this, arguments)
     }
-
     // eval 修改类名
-    SubClass = eval('('+ SubClass.toString().replace('SubClass', options.name||'Class') +')')
+    Sub = eval('0,'+ Sub.toString().replace('Sub', props.name||Super.name+'Sub'))
 
-    // 【继承父类】
-    // 【父类方法属性】
-    // prototype是父类的一个实例
-    // __isNotSelfNew: 父类的初始化方法此时暂不执行
-    // 当创建实例时，把父类的初始化方法绑定到当前实例
-    Class.__isNotSelfNew = true
-    SubClass.prototype = new Class
-    delete Class.__isNotSelfNew
+    // Sub.prototype = Super.prototype //
+    var Prototype = function(){}
+    Prototype.prototype = Super.prototype
+    Sub.prototype = new Prototype
+    Object.assign(Sub.prototype, props)
+    Sub.prototype.constructor = Sub
 
-    // 【本类方法属性】
-    // 复制options的方法到原型
-    for(var key in options){
-        var value = options[key]
-        SubClass.prototype[key] = value
-    }
-    // 修正prototype.constructor
-    SubClass.prototype.constructor = SubClass
-    SubClass.Parent = Class
-    SubClass.options = options
+    Sub.super = Super
+    Sub.props = props
+    Sub.extend = Class.extend
 
-    // super
-    SubClass.prototype.constructor.super = Class.options.constructor
-
-    // 子类同样可以用 .extend 再派生子类
-    SubClass.extend = Class.extend
-
-    return SubClass
+    return Sub
 }
+
 
 
 var EventTarget = Class.extend({
@@ -135,7 +102,10 @@ var Sprite = Watcher.extend({
     // pos
     x: 0,
     y: 0,
-    // Transformations
+    width: 0,
+    height: 0,
+    zIndex: 0,
+    // transform
     translate: [0, 0],
     rotate: 0,
     scale: [1, 1],
@@ -145,43 +115,39 @@ var Sprite = Watcher.extend({
     video: null,
     // text
     text: '',
-    // css
-    width: 10,
-    height: 10,
-    display: 'block',
-    position: 'absolute',
-    left: 'auto',
-    right: 'auto',
-    top: 'auto',
-    bottom: 'auto',
-    background: '',
-    shadow: '',
-    border: '',
-    borderRadius: 0,
-    padding: 0,
-    color: '#333',
     fontStyle: 'normal',
     fontVariant: 'normal',
     fontWeight: 'normal',
     fontSize: 16,
     lineHeight: 16,
-    fontFamily: 'normal',
-    // fontFamily: 'monospace',
+    fontFamily: 'unsetx',
+    // fontFamily: 'Tahoma',
+    // fontFamily: 'Menlo',
+    // fontFamily: 'Monaco',
+    // fontFamily: 'Osaka',
+    fontFamily: 'Verdana',
+    color: '#333',
     textShadow: 'none',
-    boxShadow: 'none',
-    opacity: 1,
-    zIndex: 0,
-    // canvas context style
-    // font: '14px monospace',
     textAlign: 'left',
     textBaseline: 'hanging',
     // textBaseline: 'top',
+    // css
+    background: '',
+    shadow: '',
+    border: '',
+    borderRadius: 0,
+    padding: 0,
+    boxShadow: 'none',
+    opacity: 1,
     // 
     parent: null,
     children: [],
     constructor: function(options){
-        options = options || {}
         var self = this
+
+        // options
+        options = options || {}
+        this.$options = options
         Object.assign(this, options)
 
         // src
@@ -200,23 +166,47 @@ var Sprite = Watcher.extend({
     draw: function(context){
         this.trigger('frame')
 
+        // context
         this.context = context || this.context || this.parent.context
         if (!this.context) return
         var context = this.context
 
+        // context save status
         context.save()
+
+        // translate
         context.translate.apply(context, this.translate)
-        context.rotate(this.rotate)
+        // scale
         context.scale.apply(context, this.scale)
+        // rotate
+        context.rotate(this.rotate)
+        // opacity
         context.globalAlpha = this.opacity
 
-        // border，background，shadow 边界
+        // text width height
+        if (this.text) {
+            context.font = this.fontStyle
+            + ' ' + this.fontVariant
+            + ' ' + this.fontWeight
+            + ' ' + this.fontSize + 'px/' + this.lineHeight + 'px'
+            + ' ' + this.fontFamily
+
+            if (!this.$options.width) {
+                this.width = context.measureText(this.text).width + this.padding*2
+            }
+            if (!this.$options.height) {
+                this.height = this.fontSize + this.padding*2
+            }
+        }
+
+        // area: background, shadow, border
         var x = this.x
         var y = this.y
+        var p = this.padding
+        var r = this.borderRadius
         var w = this.width
         var h = this.height
-        var r = this.borderRadius
-        var p = this.padding
+
         context.beginPath()
         context.moveTo(x+r, y)
         context.lineTo(x+w-r, y)
@@ -264,31 +254,11 @@ var Sprite = Watcher.extend({
 
         // text
         if (this.text) {
-            context.font = this.fontStyle
-                + ' ' + this.fontVariant
-                + ' ' + this.fontWeight
-                + ' ' + this.fontSize + 'px/' + this.lineHeight + 'px'
-                + ' ' + this.fontFamily
-                
             context.textAlign = this.textAlign
             context.textBaseline = this.textBaseline
-
-            context.strokeStyle = 'rgba(255,255,255,.4)'
             context.fillStyle = this.color
-            context.lineWidth = 1
 
-            var p = this.padding
-            var x = this.x + this.padding
-            var y = this.y + this.padding
-            var w = context.measureText(this.text).width
-            var h = this.fontSize
-            var wp = w + p*2
-            var hp = h + p*2
-            context.fillText(this.text, x, y)
-            context.strokeText(this.text, x, y)
-
-            this.width = Math.max(this.width, wp)
-            this.height = Math.max(this.height, hp)
+            context.fillText(this.text, x+p, y+p)
         }
 
         context.restore()
@@ -341,6 +311,9 @@ var Sprite = Watcher.extend({
         }
         return this
     },
+    clone: function (options) {
+        
+    },
     each: function (fn) {
         for (var i = 0; i < this.children.length; i++) {
             var child = this.children[i]
@@ -353,18 +326,16 @@ var Sprite = Watcher.extend({
         return this
     },
     transition: function (options, duration, callback) {
+        var self = this
         if (arguments.length == 1) {
-            duration = 1
+            duration = 300
         }
         if (arguments.length == 2) {
             if (typeof duration == 'function') {
                 callback = duration
-                duration = 1
+                duration = 300
             }
         }
-        duration *= 1000
-
-        var self = this
 
         var startTime = +new Date
         var lastTime = startTime
