@@ -1,6 +1,7 @@
 function Class() {}
 Class.extend = function (props) {
     var Super = this
+
     function Sub() {
         // 引用属性副本
         for(var key in this){

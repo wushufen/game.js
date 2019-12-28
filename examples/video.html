@@ -27,21 +27,20 @@
 </head>
 
 <body>
-    <video id="video" src="http://www.runoob.com/try/demo_source/movie.mp4" controls muted autoplay loop></video>
 	<script src="../game.js"></script>
     <script>
-        // var game = new Game({fps:30})
-        // game.append(new Sprite({
-        //     x: 100,
-        //     y: 100,
-        //     img: video,
-        //     width: 200,
-        //     height: 150,
-        //     border: '#0af',
-        //     color: '#0af',
-        //     borderRadius: 10
-        // })).append(new Fps)
-
+        var game = new Game({fps:30})
+        var sprite = new Sprite({
+            x: 100,
+            y: 100,
+            src: 'https://www.runoob.com/try/demo_source/movie.mp4',
+            src: 'img/mn.jpg',
+            width: 200,
+            height: 150,
+            borderWidth: 1,
+            borderColor: '#f00',
+            borderRadius: 10
+        }).appendTo(game)
     </script>
 </body>
 

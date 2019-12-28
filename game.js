@@ -126,7 +126,7 @@ var Sprite = Watcher.extend({
     // fontFamily: 'Monaco',
     // fontFamily: 'Osaka',
     fontFamily: 'Verdana',
-    color: '#333',
+    color: '#000',
     textShadow: 'none',
     textAlign: 'left',
     textBaseline: 'hanging',
@@ -134,7 +134,8 @@ var Sprite = Watcher.extend({
     // css
     background: '',
     shadow: '',
-    border: '',
+    borderWidth: 0,
+    borderColor: '#000',
     borderRadius: 0,
     padding: 0,
     boxShadow: 'none',
@@ -152,13 +153,26 @@ var Sprite = Watcher.extend({
 
         // src
         if (options.src) {
-            var img = new Image
-            img.onload = function(){
-                self.img = this
-                self.width = options.width || this.width
-                self.height = options.height || this.height
+            var isVideo = options.src.match(/\.(mp4|avi)$/)
+            if (isVideo) {
+                var video = document.createElement('video')
+                video.oncanplay = function () {
+                    self.video = this
+                    self.width = options.width || this.width
+                    self.height = options.height || this.height
+                }
+                video.loop = true
+                video.src = options.src
+                video.play()
+            } else {
+                var img = new Image
+                img.onload = function(){
+                    self.img = this
+                    self.width = options.width || this.width
+                    self.height = options.height || this.height
+                }
+                img.src = options.src
             }
-            img.src = options.src
         }
 
         this.trigger('create')
@@ -235,20 +249,20 @@ var Sprite = Watcher.extend({
             // context.fillStyle = 'rgba(0,0,0,0)'
         }
 
+        // video
+        if (this.video) {
+            context.drawImage(this.video, this.x, this.y, this.width, this.height)
+        }
+
         // img
         if (this.img) {
             context.drawImage(this.img, this.x, this.y, this.width, this.height)
         }
 
-        // video
-        if (this.video) {
-            context.drawImage(this.video, this.x, this.y)
-        }
-
         // border
-        if (this.border) {
-            context.lineWidth = 1
-            context.strokeStyle = this.color
+        if (this.borderWidth) {
+            context.lineWidth = this.borderWidth
+            context.strokeStyle = this.borderColor
             context.stroke()
         }
 
