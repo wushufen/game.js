@@ -161,9 +161,22 @@ var Sprite = Watcher.extend({
                     self.width = options.width || this.width
                     self.height = options.height || this.height
                 }
+                video.muted = true
                 video.loop = true
                 video.src = options.src
                 video.play()
+
+                // muted?
+                if (!Sprite._isVideoMutedClicked) {
+                    addEventListener('click', video._mutedHandle = function () {
+                        Sprite._isVideoMutedClicked = true
+                        video.muted = false
+                        removeEventListener('click', video._mutedHandle)
+                        delete video._mutedHandle
+                    })
+                } else {
+                    video.muted = false
+                }
             } else {
                 var img = new Image
                 img.onload = function(){
@@ -541,6 +554,8 @@ var Game = Sprite.extend({
 var Fps = Sprite.extend({
     name: 'Fps',
     color: '#000',
+    padding: 5,
+    fontSize: 10,
     lastTime: 0,
     fs: 0,
     hasFistUpdate: false,

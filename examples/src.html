@@ -18,23 +18,19 @@
     <meta name="msapplication-tap-highlight" content="no">
     <title>game.js - video</title>
     <script src="https://wusfen.github.io/console.js/dist/console.js"></script>
-    <style>
-        /*html{background: #757575}*/
-        video{
-            width: 100px;
-        }
-    </style>
 </head>
 
 <body>
-	<script src="../game.js"></script>
+    <script src="../game.js"></script>
+    <!-- <video src="https://www.runoob.com/try/demo_source/movie.mp4"></video> -->
     <script>
-        var game = new Game({fps:30})
+        var game = new Game()
+        var fps = new Fps().appendTo(game)
         var sprite = new Sprite({
             x: 100,
             y: 100,
             src: 'https://www.runoob.com/try/demo_source/movie.mp4',
-            src: 'img/mn.jpg',
+            // src: 'img/mn.jpg',
             width: 200,
             height: 150,
             borderWidth: 1,
