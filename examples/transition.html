@@ -22,14 +22,22 @@
 <body>
 	<script src="../game.js"></script>
     <script>
-        var game = new Game({fps:24})
-        var fps = new Fps({fontSize:30,color:'red'})
+        var game = new Game({fps:120})
+        var fps = new Fps({fontSize:30})
             .appendTo(game)
-            .transition({x:300, y:300}, function(){
-                this.transition({x:200,y:400,color:'#0af'}, function () {
-                    this.transition({x:100,y:200, color:'#080'})
-                })
+
+        function trans() {
+            var options = {
+                x: Math.random()* game.width,
+                y: Math.random()* game.height,
+                color: '#0af'
+            }
+            fps.transition(options, function(){
+                trans()
             })
+        }
+        trans()
+            
 
         var sprite = new Sprite({
             x: 10,

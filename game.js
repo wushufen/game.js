@@ -34,7 +34,6 @@ Class.extend = function (props) {
 }
 
 
-
 var EventTarget = Class.extend({
     name: 'EventTarget',
     events: {},
@@ -355,12 +354,12 @@ var Sprite = Watcher.extend({
     transition: function (options, duration, callback) {
         var self = this
         if (arguments.length == 1) {
-            duration = 300
+            duration = 1000
         }
         if (arguments.length == 2) {
             if (typeof duration == 'function') {
                 callback = duration
-                duration = 300
+                duration = 1000
             }
         }
 
@@ -471,7 +470,7 @@ var Game = Sprite.extend({
     width: 0,
     height: 0,
     timer: null,
-    fps: 1000,
+    fps: 60,
     constructor: function(options){
         options = options || {}
 
@@ -534,10 +533,12 @@ var Game = Sprite.extend({
         var self = this
         // this.captureEvent({type: 'frame'}) // || sprite.draw(){this.trigger('frame')}
 
+        var updateStartTime = new Date
         this.update()
+        var updateTime = new Date - updateStartTime
         this.timer = setTimeout(function(){
             self.loop()
-        }, 1000/ this.fps)
+        }, 1000/this.fps - updateTime)
     },
     start: function(){
         this.pause()
@@ -547,8 +548,6 @@ var Game = Sprite.extend({
         clearTimeout(this.timer)
     },
 })
-
-
 
 
 var Fps = Sprite.extend({
