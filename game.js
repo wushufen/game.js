@@ -105,9 +105,8 @@ var Sprite = Watcher.extend({
     height: 0,
     zIndex: 0,
     // transform
-    translate: [0, 0],
     rotate: 0,
-    scale: [1, 1],
+    scale: 1,
     // img
     src: '',
     img: null,
@@ -117,8 +116,8 @@ var Sprite = Watcher.extend({
     fontStyle: 'normal',
     fontVariant: 'normal',
     fontWeight: 'normal',
-    fontSize: 16,
-    lineHeight: 16,
+    fontSize: 14,
+    lineHeight: 14,
     fontFamily: 'unsetx',
     // fontFamily: 'Tahoma',
     // fontFamily: 'Menlo',
@@ -134,7 +133,7 @@ var Sprite = Watcher.extend({
     background: '',
     shadow: '',
     borderWidth: 0,
-    borderColor: '#000',
+    borderColor: '',
     borderRadius: 0,
     padding: 0,
     boxShadow: 'none',
@@ -200,15 +199,6 @@ var Sprite = Watcher.extend({
         // context save status
         context.save()
 
-        // translate
-        context.translate.apply(context, this.translate)
-        // scale
-        context.scale.apply(context, this.scale)
-        // rotate
-        context.rotate(this.rotate)
-        // opacity
-        context.globalAlpha = this.opacity
-
         // text width height
         if (this.text) {
             context.font = this.fontStyle
@@ -225,7 +215,7 @@ var Sprite = Watcher.extend({
             }
         }
 
-        // area: background, shadow, border
+        // 
         var x = this.x
         var y = this.y
         var p = this.padding
@@ -233,6 +223,19 @@ var Sprite = Watcher.extend({
         var w = this.width
         var h = this.height
 
+        // transform: translate=>(x,y)  x,y=>transformOrigin
+        var x = -w/2
+        var y = -h/2
+        context.translate(this.x+w/2, this.y+h/2)
+        
+        // scale
+        context.scale(this.scale, this.scale)
+        // rotate
+        context.rotate(this.rotate)
+        // opacity
+        context.globalAlpha = this.opacity
+
+        // area: background, shadow, border
         context.beginPath()
         context.moveTo(x+r, y)
         context.lineTo(x+w-r, y)
@@ -274,7 +277,7 @@ var Sprite = Watcher.extend({
         // border
         if (this.borderWidth) {
             context.lineWidth = this.borderWidth
-            context.strokeStyle = this.borderColor
+            context.strokeStyle = this.borderColor || this.color
             context.stroke()
         }
 
@@ -406,7 +409,7 @@ var Sprite = Watcher.extend({
             if (Object.keys(dones).length == keys.length) {
                 this.off('frame', this.transitionHandler)
                 this.trigger('transitionend')
-                console.log('transitionend')
+                // console.log('transitionend')
                 if (callback) {
                     callback.call(this)
                 }
@@ -539,6 +542,7 @@ var Game = Sprite.extend({
         this.timer = setTimeout(function(){
             self.loop()
         }, 1000/this.fps - updateTime)
+        // console.log(1000/this.fps, updateTime)
     },
     start: function(){
         this.pause()
@@ -554,7 +558,6 @@ var Fps = Sprite.extend({
     name: 'Fps',
     color: '#000',
     padding: 5,
-    fontSize: 10,
     lastTime: 0,
     fs: 0,
     hasFistUpdate: false,

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>transform</title>
+</head>
+<body>
+  <script src="../game.js"></script>
+  <script>
+    var game = new Game
+
+    var sprite = new Sprite({
+      text: 'sprite',
+      x: 100,
+      y: 100,
+      background: '#0008',
+      color: '#000',
+      padding: 10,
+      borderWidth: 1,
+      borderRadius: 5,
+    }).appendTo(game)
+    var sprite = new Sprite({
+      text: 'scale',
+      x: 100,
+      y: 100,
+      background: '#0af8',
+      color: '#0af',
+      padding: 10,
+      borderWidth: 1,
+      borderRadius: 5,
+      scale: 2,
+    }).appendTo(game)
+
+    var sprite = new Sprite({
+      text: 'rotate',
+      x: 100,
+      y: 100,
+      background: '#f808',
+      color: '#f80',
+      padding: 10,
+      borderWidth: 1,
+      borderRadius: 5,
+      // scale: 2,
+      rotate: Math.PI/2,
+    }).appendTo(game)
+
+  </script>
+</body>
+</html>

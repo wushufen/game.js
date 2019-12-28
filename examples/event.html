@@ -30,14 +30,11 @@
         var fps = new Fps({
             x: 100,
             y: 100,
-            fontSize: 50,
+            // fontSize: 50,
             color: '#0af',
-            border: 'solid 1px #ddd',
+            borderWidth: 1,
             borderRadius: 5,
             padding: 10,
-            update: function () {
-                this.text = this.fs + 'afgilm中国'
-            }
         }).appendTo(game)
 
         var mg = fps
@@ -45,13 +42,13 @@
             .on('mousedown,touchstart', function (e) {
                 console.log(1, e)
                 this.isMouseDown = true
-                this.opacity = .5
+                this.opacity = .4
             })
             .on('mouseup,touchend', function (e) {
                 console.log(2, e)
                 this.isMouseDown = false
                 // this.opacity = 1
-                this.transition({opacity: 1}, .25)
+                this.transition({opacity: 1}, 300)
             })
         game.on('mousemove,touchmove', function (e) {
             // console.log(e.clientX, e.clientY)
