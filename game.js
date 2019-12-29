@@ -543,10 +543,16 @@ var Game = Sprite.Game = Sprite.extend({
         var updateStartTime = new Date
         this.update()
         var updateTime = new Date - updateStartTime
+        var timeout = 1000/this.fps - updateTime - (this.timeWaitTime||0)
+
+        var timerStartTime = new Date
         this.timer = setTimeout(function(){
+            var timeRunTime = new Date
+            var timeWaitTime = timeRunTime - timerStartTime - timeout
+            self.timeWaitTime = timeWaitTime
+            // console.log(1000/self.fps, updateTime, timeRunTime-timerStartTime, timeout, timeWaitTime)
             self.loop()
-        }, 1000/this.fps - updateTime)
-        // console.log(1000/this.fps, updateTime)
+        }, timeout)
     },
     start: function(){
         this.pause()

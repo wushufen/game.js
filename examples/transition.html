@@ -29,7 +29,7 @@
                 x: Math.random()* (game.width-sprite.width),
                 y: Math.random()* game.height,
                 rotate: Math.random()*Math.PI*8,
-                scale: Math.random()*4 + 1,
+                scale: Math.random()*2 + .5,
                 color: '#'
                     + parseInt(Math.random()*256).toString(16).padStart(2,0)
                     + parseInt(Math.random()*256).toString(16).padStart(2,0)
@@ -43,7 +43,7 @@
 
         // trans(fps)
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 100; i++) {
             var sprite = new Sprite({
                 x: 10,
                 y: 20,
