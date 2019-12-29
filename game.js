@@ -128,7 +128,7 @@ var Sprite = Watcher.extend({
     textShadow: 'none',
     textAlign: 'left',
     textBaseline: 'hanging',
-    // textBaseline: 'top',
+    textBaseline: 'middle',
     // css
     background: '',
     shadow: '',
@@ -287,7 +287,11 @@ var Sprite = Watcher.extend({
             context.textBaseline = this.textBaseline
             context.fillStyle = this.color
 
-            context.fillText(this.text, x+p, y+p)
+            if (this.textBaseline == 'middle') {
+                context.fillText(this.text, x+p, y+p+this.fontSize/2)
+            } else {
+                context.fillText(this.text, x+p, y+p)
+            }
         }
 
         context.restore()
@@ -465,7 +469,7 @@ var Sprite = Watcher.extend({
 })
 
 
-var Game = Sprite.extend({
+var Game = Sprite.Game = Sprite.extend({
     name: 'Game',
     isStart: true,
     canvas: null,
@@ -554,10 +558,8 @@ var Game = Sprite.extend({
 })
 
 
-var Fps = Sprite.extend({
+var Fps = Sprite.Fps = Sprite.extend({
     name: 'Fps',
-    color: '#000',
-    padding: 5,
     lastTime: 0,
     fs: 0,
     hasFistUpdate: false,

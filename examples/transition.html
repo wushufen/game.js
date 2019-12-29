@@ -22,12 +22,7 @@
 <body>
 	<script src="../game.js"></script>
     <script>
-        var game = new Game({fps:60})
-        var fps = new Fps({
-            borderWidth: 1,
-            padding: 10,
-            borderRadius: 5,
-        }).appendTo(game)
+        var game = new Game({fps:60}).append(new Fps)
 
         function trans(sprite) {
             var options = {

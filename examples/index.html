@@ -22,21 +22,20 @@
 <body>
     <script src="../game.js"></script>
     <script>
-        var game = new Game({ fps: 3 })
+        var game = new Game()
             .append(new Fps)
 
         var sprite = new Sprite({
+            text: '中华人民共和国🇨🇳sprite',
             x: 100,
             y: 100,
-            width: 100,
-            // height: 100,
-            // border: 'solid 1px #ddd',
+            borderWidth: 1,
             borderRadius: 5,
-            color: '#0af',
-            background: '#eee',
-            shadow: 'todo',
             padding: 14,
-            text: 'sprite',
+            color: '#0af',
+            background: '#0af4',
+            scale: 2,
+            rotate: Math.PI/2/2,
         })
             .appendTo(game)
             .on('deviceoritantion', function () {

@@ -5,7 +5,7 @@
 * https://wusfen.github.io/game.js/examples/transition.html
 * https://wusfen.github.io/game.js/examples/event.html
 * https://wusfen.github.io/game.js/examples/sensor.html
-* https://wusfen.github.io/game.js/examples/video.html
+* https://wusfen.github.io/game.js/examples/src.html
 * https://wusfen.github.io/game.js/examples/index.html
 * https://wusfen.github.io/game.js/examples/test.html
 
@@ -16,7 +16,6 @@
 ### options
 
 ```javascript
-
 var sprite = new Sprite({
     // pos
     x: 0,
@@ -42,7 +41,7 @@ var sprite = new Sprite({
     color: '#000',
     textShadow: 'none',
     textAlign: 'left',
-    textBaseline: 'hanging',
+    textBaseline: 'middle',
     // css
     background: '',
     shadow: '',
@@ -109,3 +108,44 @@ sprite.trigger(eventType, data)
 - frame
 - create
 - transitionend
+
+
+### Sprite.extend
+```javascript
+var SpriteSub = Sprite.extend({
+    arg1: 0,
+    constructor: function(arg0, arg1, argN){
+    },
+    method1: function(){
+        console.log(this.arg1)
+    },
+    oncreate: function(){
+        this.method1()
+    }
+})
+var spriteSub = new SpriteSub({
+    arg1: 100
+})
+```
+
+
+## Sprite.Game extends Sprite
+```javascript
+var game = new Sprite.Game({
+    isStart: true,
+    canvas: null, // auto create
+    width: 0,
+    height: 0,
+    fps: 60,
+})
+game.start()
+game.pause()
+game.appendChild(childSprite)
+```
+
+
+## Sprite.Fps extends Sprite
+```javascript
+new Sprite.Fps()
+    .appendTo(game)
+```
