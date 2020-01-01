@@ -66,11 +66,12 @@ new Sprite({
 
 ### methods
 ```javascript
+sprite.assign(options)
 sprite.appendTo(parentSprite)
-sprite.appendChild(childSprite)
 sprite.append(childSprite)
-sprite.removeChild(childSprite)
+sprite.appendChild(childSprite)
 sprite.remove()
+sprite.removeChild(childSprite)
 sprite.clone()
 sprite.each(function(child, index){})
 sprite.transition(options, duration, callback)
