@@ -16,33 +16,94 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="format-detection" content="telephone=no">
     <meta name="msapplication-tap-highlight" content="no">
-    <title>wsf game.js游戏引擎</title>
+    <title>game.js</title>
 </head>
 
 <body>
-    <script src="../game.js"></script>
+	<script src="../game.js"></script>
     <script>
-        var game = new Game()
-            .append(new Fps)
+        var game = new Game({fps:1000, background:'#eee'}).append(new Fps)
 
-        var sprite = new Sprite({
-            text: '中华人民共和国🇨🇳sprite',
-            x: 100,
-            y: 100,
+        new Sprite({
+            text: 'game.js',
+            padding: 10,
+            // borderWidth: 1,
+            borderRadius: 5,
+            onframe: function () {
+                // this.text = new Date().toLocaleString()
+            }
+        }).appendTo(game)
+
+        new Sprite({
+            text: 'game.js',
+            padding: 10,
             borderWidth: 1,
             borderRadius: 5,
-            padding: 14,
-            color: '#0af',
-            background: '#0af4',
-            scale: 2,
-            rotate: Math.PI/2/2,
-        })
-            .appendTo(game)
-            .on('deviceoritantion', function () {
+            onframe: function () {
+                this.text = new Date().toLocaleString()
+            }
+        }).appendTo(game)
 
+        new Sprite({
+            width: 50,
+            height: 50,
+            background: '#0af',
+            shadow: '#888',
+            borderRadius: 10,
+        }).appendTo(game)
+
+        new Sprite({
+            width: 50,
+            height: 50,
+            background: '#f80',
+            borderRadius: 25,
+        }).appendTo(game)
+
+        new Sprite({
+            width: 50,
+            height: 50,
+            borderWidth: 1,
+            // borderRadius: 5,
+        }).appendTo(game)
+
+        new Sprite({
+            src: 'img/ball.png'
+        }).appendTo(game)
+        new Sprite({
+            width: 25,
+            height: 25,
+            src: 'img/mg.jpg'
+        }).appendTo(game)
+        new Sprite({
+            src: 'https://www.runoob.com/try/demo_source/movie.mp4',
+            width: 160,
+            height: 120,
+        }).appendTo(game)
+
+        function trans(sprite) {
+            var options = {
+                x: Math.random()* (game.width-sprite.width),
+                y: Math.random()* game.height,
+                rotate: -Math.PI + Math.random()*Math.PI*2,
+                scale: Math.random()*2 + .5,
+                color: '#'
+                    + parseInt(Math.random()*256).toString(16).padStart(2,0)
+                    + parseInt(Math.random()*256).toString(16).padStart(2,0)
+                    + parseInt(Math.random()*256).toString(16).padStart(2,0),
+                background: sprite.background && '#'
+                    + parseInt(Math.random()*256).toString(16).padStart(2,0)
+                    + parseInt(Math.random()*256).toString(16).padStart(2,0)
+                    + parseInt(Math.random()*256).toString(16).padStart(2,0),
+                opacity: .3 + Math.random(),
+            }
+            sprite.transition(options, 2500+Math.random()*1000, function(){
+                trans(sprite)
             })
+        }
 
-
+        for (var i = 1; i<game.children.length; i++) {
+            trans(game.children[i])
+        }
 
     </script>
 </body>
