@@ -474,7 +474,7 @@ var Sprite = Watcher.extend({
 
 var Game = Sprite.Game = Sprite.extend({
     name: 'Game',
-    isStart: true,
+    isPause: false,
     canvas: null,
     context: null,
     width: 0,
@@ -494,10 +494,7 @@ var Game = Sprite.Game = Sprite.extend({
         this.resize()
 
         this.listen()
-
-        if (this.isStart) {
-            this.start()
-        }
+        this.start()
     },
     listen: function(){
         var self = this
@@ -507,12 +504,14 @@ var Game = Sprite.Game = Sprite.extend({
             if(ontype.match(/^on./)){
                 var type = ontype.substr(2)
                 self.canvas.addEventListener(type, function(e){
+                    if(self.isPause) return
                     self.captureEvent(e)
                 })
             }
         }
         // 传感器
         addEventListener('deviceorientation', function(e) {
+            if(self.isPause) return
             self.captureEvent(e)
         })
         // resize
@@ -559,9 +558,11 @@ var Game = Sprite.Game = Sprite.extend({
     },
     start: function(){
         this.pause()
+        this.isPause = false
         this.loop()
     },
     pause: function(){
+        this.isPause = true
         clearTimeout(this.timer)
     },
 })

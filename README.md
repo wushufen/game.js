@@ -133,7 +133,6 @@ var spriteSub = new SpriteSub({
 ## Sprite.Game extends Sprite
 ```javascript
 var game = new Sprite.Game({
-    isStart: true,
     canvas: null, // auto create
     width: 0,
     height: 0,
