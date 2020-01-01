@@ -358,6 +358,9 @@ var Sprite = Watcher.extend({
 
         return this
     },
+    assign: function (options) {
+        Object.assign(this, options)
+    },
     transition: function (options, duration, callback) {
         var self = this
         if (arguments.length == 1) {
@@ -543,14 +546,14 @@ var Game = Sprite.Game = Sprite.extend({
         var updateStartTime = new Date
         this.update()
         var updateTime = new Date - updateStartTime
-        var timeout = 1000/this.fps - updateTime - (this.timeWaitTime||0)
+        var timeout = 1000/this.fps - updateTime - (this.timeWaitTimeout||0)
 
         var timerStartTime = new Date
         this.timer = setTimeout(function(){
             var timeRunTime = new Date
-            var timeWaitTime = timeRunTime - timerStartTime - timeout
-            self.timeWaitTime = timeWaitTime
-            // console.log(1000/self.fps, updateTime, timeRunTime-timerStartTime, timeout, timeWaitTime)
+            var timeWaitTimeout = timeRunTime - timerStartTime - timeout
+            self.timeWaitTimeout = timeWaitTimeout
+            // console.log(1000/self.fps, updateTime, timeRunTime-timerStartTime, timeout, timeWaitTimeout)
             self.loop()
         }, timeout)
     },
