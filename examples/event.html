@@ -27,7 +27,8 @@
             background: '#f7f7f7'
         })
 
-        var fps = new Fps({
+        var sprite = new Sprite({
+            text: 'drag me',
             x: 100,
             y: 100,
             // fontSize: 50,
@@ -37,7 +38,7 @@
             padding: 10,
         }).appendTo(game)
 
-        var mg = fps
+        var mg = sprite
             // new Sprite({src: 'img/mg.jpg'}).appendTo(game)
             .on('mousedown,touchstart', function (e) {
                 console.log(1, e)
